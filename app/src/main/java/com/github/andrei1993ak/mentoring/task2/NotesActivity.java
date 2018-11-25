@@ -51,10 +51,10 @@ public class NotesActivity extends AppCompatActivity
 
         mTabHost.addTab(
                 mTabHost.newTabSpec(allNotesString).setIndicator(allNotesString, null),
-                FragmentTab.class, null);
+                NotesTab.class, NotesTab.getAllNotesArguments());
         mTabHost.addTab(
                 mTabHost.newTabSpec(favouriteNotesString).setIndicator(favouriteNotesString, null),
-                FragmentTab.class, null);
+                NotesTab.class, NotesTab.getFavouritesNotesArguments());
     }
 
     private void goToCreateNote() {

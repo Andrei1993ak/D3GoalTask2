@@ -1,17 +1,12 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
     android:background="#eaecee">
 
-    <TextView
-        android:id="@+id/text"
+    <com.github.andrei1993ak.mentoring.task2.uiutils.ContextMenuRecyclerView
+        android:id="@+id/recycler_notes"
+        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="HelloWorld"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
