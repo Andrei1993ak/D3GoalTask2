@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="storageOptions">
+        <item>@string/storageoptions_local_file</item>
+        <item>@string/storageoptions_sd_card_file</item>
+        <item>@string/storageoptions_stub</item>
+        <item>@string/storageoptions_preferences</item>
+        <item>@string/storageoptions_database</item>
+        <item>@string/storageoptions_memory</item>
+    </string-array>
+</resources>

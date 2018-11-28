@@ -13,4 +13,15 @@
     <string name="save">Save</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+
+    <string name="storage">Storage</string>
+    <string name="storage_description">Selected Storage</string>
+    <string name="storageoptions_local_file">Local File</string>
+    <string name="storageoptions_sd_card_file">Sd Card File</string>
+    <string name="storageoptions_stub">Stub Storage</string>
+    <string name="storageoptions_database">Database</string>
+    <string name="storageoptions_memory">Memory</string>
+    <string name="storageoptions_preferences">Shared Preferences</string>
+
+    <string name="storage_pref_key">StorageKey</string>
 </resources>

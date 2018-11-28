@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="title1"
-        android:summary="summary1"
-        android:defaultValue="true" />
+    <ListPreference
+        android:defaultValue="@string/storageoptions_stub"
+        android:entries="@array/storageOptions"
+        android:entryValues="@array/storageOptions"
+        android:key="@string/storage_pref_key"
+        android:summary="@string/storage_description"
+        android:title="@string/storage"></ListPreference>
 </PreferenceScreen>

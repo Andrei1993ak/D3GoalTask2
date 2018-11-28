@@ -123,10 +123,14 @@ public class NotesTab extends Fragment {
         public Loader<List<INote>> onCreateLoader(final int pI, @Nullable final Bundle pBundle) {
             final Loader<List<INote>> loader;
 
+            final Context context = getContext();
+
+            final INotesLoaderFactory notesLoaderFactory = INotesLoaderFactory.Impl.get(context);
+
             if (mIsFavourite) {
-                loader = INotesLoaderFactory.Impl.get().getFavouriteNotesLoader(getContext());
+                loader = notesLoaderFactory.getFavouriteNotesLoader(context);
             } else {
-                loader = INotesLoaderFactory.Impl.get().getAllNotesLoader(getContext());
+                loader = notesLoaderFactory.getAllNotesLoader(context);
             }
 
             return loader;
