@@ -13,7 +13,7 @@ import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStor
 import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.MEMORY;
 import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.PREFERENCES;
 import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.STUB;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.UNNKNOWN;
+import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.UNKNOWN;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public interface ICurrentStorageTypeHolder {
@@ -24,21 +24,21 @@ public interface ICurrentStorageTypeHolder {
     int getCurrentItem();
 
     class Impl {
-        private static CurrentStorageTypeHolder sInstanse;
+        private static CurrentStorageTypeHolder sInstance;
 
         public static ICurrentStorageTypeHolder get(final Context pContext) {
-            if (sInstanse == null) {
-                sInstanse = new CurrentStorageTypeHolder(pContext);
+            if (sInstance == null) {
+                sInstance = new CurrentStorageTypeHolder(pContext);
             }
 
-            return sInstanse;
+            return sInstance;
         }
     }
 
     @Retention(SOURCE)
-    @IntDef({LOCAL, STUB, DATABASE, UNNKNOWN, EXTERNAL, PREFERENCES, MEMORY})
+    @IntDef({LOCAL, STUB, DATABASE, UNKNOWN, EXTERNAL, PREFERENCES, MEMORY})
     @interface StorageType {
-        int UNNKNOWN = -1;
+        int UNKNOWN = -1;
         int LOCAL = 0;
         int STUB = 1;
         int DATABASE = 2;

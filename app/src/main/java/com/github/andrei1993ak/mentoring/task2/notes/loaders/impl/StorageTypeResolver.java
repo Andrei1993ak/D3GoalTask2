@@ -29,7 +29,7 @@ public class StorageTypeResolver {
         } else if (preferencesFileStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.PREFERENCES;
         } else {
-            return ICurrentStorageTypeHolder.StorageType.UNNKNOWN;
+            return ICurrentStorageTypeHolder.StorageType.UNKNOWN;
         }
     }
 }
