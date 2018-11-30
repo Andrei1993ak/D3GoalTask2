@@ -1,8 +1,8 @@
-package com.github.andrei1993ak.mentoring.task2.notes;
+package com.github.andrei1993ak.mentoring.task2.model;
 
 public class Note implements INote {
 
-    private long mId;
+    private final long mId;
     private final String mTitle;
     private final String mDescription;
     private final boolean mIsFavourite;

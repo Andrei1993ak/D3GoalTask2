@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public interface ICallExecutor<Model> {
-    void enqueueCall(ISusses<Model> pSusses, ICallable<Model> pCallable);
+    void enqueue(ISuccess<? super Model> pSusses);
 
     class Impl {
         private static final Executor sDefaultExecutor = new ThreadPoolExecutor(4, 4, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>());
@@ -19,13 +19,13 @@ public interface ICallExecutor<Model> {
             return new ICallExecutor<Model>() {
 
                 @Override
-                public void enqueueCall(final ISusses<Model> pSusses, final ICallable<Model> pCallable) {
+                public void enqueue(final ISuccess<? super Model> pSusses) {
                     if (pSusses.isAlive()) {
-                        sDefaultExecutor.execute(new Runnable() {
+                        pExecutor.execute(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    final Model model = pCallable.call();
+                                    final Model model = pCall.call();
                                     if (pSusses.isAlive()) {
                                         pSusses.onResult(model);
                                     }

@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.uiutils;
+package com.github.andrei1993ak.mentoring.task2.utils;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

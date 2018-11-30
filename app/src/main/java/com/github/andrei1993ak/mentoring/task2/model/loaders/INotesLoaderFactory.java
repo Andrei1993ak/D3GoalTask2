@@ -1,12 +1,12 @@
-package com.github.andrei1993ak.mentoring.task2.notes.loaders;
+package com.github.andrei1993ak.mentoring.task2.model.loaders;
 
 import android.content.Context;
 import android.support.v4.content.Loader;
 import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.notes.INote;
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.impl.MemoryNotesLoaderFactory;
+import com.github.andrei1993ak.mentoring.task2.model.INote;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.impl.MemoryNotesLoaderFactory;
 
 import java.util.List;
 
@@ -18,7 +18,8 @@ public interface INotesLoaderFactory {
 
     ICallable<Integer> getDeleteNoteCallable(final long pNoteId);
 
-    ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final INote pNote);
+    ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription,
+                                             final boolean pIsFavourite);
 
     ICallable<Boolean> getCreateNoteCallable(final String pTitle, final String pDescription,
                                              final boolean pIsFavourite);

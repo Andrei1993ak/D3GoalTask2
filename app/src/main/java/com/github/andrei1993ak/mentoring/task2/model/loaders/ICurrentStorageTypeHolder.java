@@ -1,19 +1,17 @@
-package com.github.andrei1993ak.mentoring.task2.notes.loaders;
+package com.github.andrei1993ak.mentoring.task2.model.loaders;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
 
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.impl.CurrentStorageTypeHolder;
-
 import java.lang.annotation.Retention;
 
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.DATABASE;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.EXTERNAL;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.LOCAL;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.MEMORY;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.PREFERENCES;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.STUB;
-import static com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder.StorageType.UNKNOWN;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.DATABASE;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.EXTERNAL;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.LOCAL;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.MEMORY;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.PREFERENCES;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.STUB;
+import static com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder.StorageType.UNKNOWN;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public interface ICurrentStorageTypeHolder {

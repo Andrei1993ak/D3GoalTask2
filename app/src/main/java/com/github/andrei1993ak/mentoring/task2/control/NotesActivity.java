@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2;
+package com.github.andrei1993ak.mentoring.task2.control;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.github.andrei1993ak.mentoring.task2.R;
 
 public class NotesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -58,8 +60,7 @@ public class NotesActivity extends AppCompatActivity
     }
 
     private void goToCreateNote() {
-        final Intent intent = new Intent(NotesActivity.this, CreateNoteActivity.class);
-        NotesActivity.this.startActivityForResult(intent, 101);
+        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this));
     }
 
     @Override

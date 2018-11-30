@@ -1,9 +1,9 @@
-package com.github.andrei1993ak.mentoring.task2.notes.loaders.impl;
+package com.github.andrei1993ak.mentoring.task2.model.loaders;
 
 import android.content.Context;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder;
 
 public class StorageTypeResolver {
 

@@ -1,12 +1,12 @@
-package com.github.andrei1993ak.mentoring.task2.notes.loaders.impl;
+package com.github.andrei1993ak.mentoring.task2.model.loaders.impl;
 
 import android.content.Context;
 import android.support.v4.content.Loader;
 
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.notes.INote;
-import com.github.andrei1993ak.mentoring.task2.notes.Note;
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.INotesLoaderFactory;
+import com.github.andrei1993ak.mentoring.task2.model.INote;
+import com.github.andrei1993ak.mentoring.task2.model.Note;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.INotesLoaderFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -18,9 +18,9 @@ public class MemoryNotesLoaderFactory implements INotesLoaderFactory {
     private static int idCounter = 0;
 
     static {
-        Note note = new Note(idCounter++, "Title1", "Description", true);
-        Note note2 = new Note(idCounter++, "Title2", "Description", false);
-        Note note3 = new Note(idCounter++, "Title3", "Description", true);
+        final Note note = new Note(idCounter++, "Title1", "Description", true);
+        final Note note2 = new Note(idCounter++, "Title2", "Description", false);
+        final Note note3 = new Note(idCounter++, "Title3", "Description", true);
         sNoteMap.put(note.getId(), note);
         sNoteMap.put(note2.getId(), note2);
         sNoteMap.put(note3.getId(), note3);
@@ -48,12 +48,14 @@ public class MemoryNotesLoaderFactory implements INotesLoaderFactory {
     }
 
     @Override
-    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final INote pNote) {
+    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
         return new ICallable<Boolean>() {
 
             @Override
             public Boolean call() {
-                return sNoteMap.put(pNoteId, pNote) != null;
+                final Note note = new Note(pNoteId, pTitle, pDescription, pIsFavourite);
+
+                return sNoteMap.put(pNoteId, note) != null;
             }
         };
     }

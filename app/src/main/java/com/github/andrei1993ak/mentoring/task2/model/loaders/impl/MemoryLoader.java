@@ -1,11 +1,11 @@
-package com.github.andrei1993ak.mentoring.task2.notes.loaders.impl;
+package com.github.andrei1993ak.mentoring.task2.model.loaders.impl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.github.andrei1993ak.mentoring.task2.notes.INote;
+import com.github.andrei1993ak.mentoring.task2.model.INote;
 
 import java.util.ArrayList;
 import java.util.Collection;

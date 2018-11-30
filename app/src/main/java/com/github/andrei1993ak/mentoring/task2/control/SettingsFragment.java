@@ -1,11 +1,12 @@
-package com.github.andrei1993ak.mentoring.task2;
+package com.github.andrei1993ak.mentoring.task2.control;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.ICurrentStorageTypeHolder;
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.impl.StorageTypeResolver;
+import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.StorageTypeResolver;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 

@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.uiutils;
+package com.github.andrei1993ak.mentoring.task2.utils;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -10,7 +10,7 @@ public abstract class RightDrawableOnTouchListener implements View.OnTouchListen
     private Drawable drawable;
     private int fuzz = 10;
 
-    public RightDrawableOnTouchListener(TextView view) {
+    public RightDrawableOnTouchListener(final TextView view) {
         super();
         final Drawable[] drawables = view.getCompoundDrawables();
         if (drawables != null && drawables.length == 4)

@@ -24,4 +24,9 @@
     <string name="storageoptions_preferences">Shared Preferences</string>
 
     <string name="storage_pref_key">StorageKey</string>
+    <string name="title_or_description_should_be_not_empty">Title or description should be not empty</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="manage_note">Manage Note</string>
 </resources>

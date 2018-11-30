@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".NotesActivity"
+            android:name=".control.NotesActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,14 +21,14 @@
         </activity>
 
         <activity
-            android:name=".CreateNoteActivity"
-            android:label="@string/new_task"
-            android:parentActivityName="NotesActivity"></activity>
+            android:name=".control.CreateEditNoteActivity"
+            android:label="@string/manage_note"
+            android:parentActivityName=".control.NotesActivity"></activity>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".control.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName="NotesActivity"></activity>
+            android:parentActivityName=".control.NotesActivity"></activity>
     </application>
 
 </manifest>

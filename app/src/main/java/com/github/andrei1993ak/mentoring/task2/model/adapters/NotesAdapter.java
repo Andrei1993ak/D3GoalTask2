@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.notes;
+package com.github.andrei1993ak.mentoring.task2.model.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.uiutils.RightDrawableOnTouchListener;
+import com.github.andrei1993ak.mentoring.task2.model.INote;
+import com.github.andrei1993ak.mentoring.task2.utils.RightDrawableOnTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,20 +32,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     @Override
     public long getItemId(final int position) {
-        return  mNotes.get(position).getId();
+        return mNotes.get(position).getId();
     }
 
     public void updateNotes(final List<INote> pUpdatedNotes) {
         mNotes.clear();
         mNotes.addAll(pUpdatedNotes);
         notifyDataSetChanged();
-    }
-
-    public void deleteNote(final INote pNote) {
-        final int position = mNotes.indexOf(pNote);
-
-        mNotes.remove(pNote);
-        notifyItemRemoved(position);
     }
 
     @NonNull
@@ -61,6 +55,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public int getItemCount() {
         return mNotes.size();
+    }
+
+    public INote getItem(int pPosition) {
+        return mNotes.get(pPosition);
     }
 
     class NotesViewHolder extends RecyclerView.ViewHolder {

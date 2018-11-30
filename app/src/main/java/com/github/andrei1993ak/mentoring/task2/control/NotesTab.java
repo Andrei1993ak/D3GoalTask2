@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2;
+package com.github.andrei1993ak.mentoring.task2.control;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,17 +15,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.core.ICallExecutor;
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.core.ISusses;
-import com.github.andrei1993ak.mentoring.task2.notes.INote;
-import com.github.andrei1993ak.mentoring.task2.notes.NotesAdapter;
-import com.github.andrei1993ak.mentoring.task2.notes.loaders.INotesLoaderFactory;
-import com.github.andrei1993ak.mentoring.task2.uiutils.ContextMenuRecyclerView;
-import com.github.andrei1993ak.mentoring.task2.uiutils.UiUtils;
-import com.github.andrei1993ak.mentoring.task2.uiutils.VerticalSpaceItemDecoration;
+import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
+import com.github.andrei1993ak.mentoring.task2.model.INote;
+import com.github.andrei1993ak.mentoring.task2.model.adapters.NotesAdapter;
+import com.github.andrei1993ak.mentoring.task2.model.loaders.INotesLoaderFactory;
+import com.github.andrei1993ak.mentoring.task2.utils.ContextMenuRecyclerView;
+import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
+import com.github.andrei1993ak.mentoring.task2.utils.VerticalSpaceItemDecoration;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotesTab extends Fragment implements ISusses<Integer> {
+public class NotesTab extends Fragment {
     private final static int GET_NOTES_LOADER_ID = 0;
 
     private static final String IS_FAVOURITE_KEY = "IS_FAVOURITE_KEY";
@@ -95,6 +95,13 @@ public class NotesTab extends Fragment implements ISusses<Integer> {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
+    }
+
+    @Override
     public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
@@ -109,51 +116,21 @@ public class NotesTab extends Fragment implements ISusses<Integer> {
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
-        Toast.makeText(getContext(), String.valueOf(info.id), Toast.LENGTH_LONG).show();
 
-        final ICallable<Integer> deleteNoteCallable = INotesLoaderFactory.Impl.get(getContext()).getDeleteNoteCallable(info.id);
-        ICallExecutor.Impl.newInstance(deleteNoteCallable).enqueueCall(this, deleteNoteCallable);
+        if (item.getItemId() == R.id.action_delete_note) {
+            final ICallable<Integer> deleteNoteCallable = INotesLoaderFactory.Impl.get(getContext()).getDeleteNoteCallable(info.id);
+            ICallExecutor.Impl.newInstance(deleteNoteCallable).enqueue(new OnOperationUpdateSuccess());
+
+            return true;
+        } else if (item.getItemId() == R.id.action_edit_note) {
+            final INote note = mAdapter.getItem(info.position);
+
+            startActivity(CreateEditNoteActivity.getEditNoteIntent(getContext(), note));
+
+            return true;
+        }
+
         return super.onContextItemSelected(item);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
-    }
-
-    @Override
-    public void onResult(Integer pInteger) {
-        final FragmentActivity activity = getActivity();
-
-        if (UiUtils.isContextAlive(activity)) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onError(final Throwable pThrowable) {
-        final FragmentActivity activity = getActivity();
-
-        if (UiUtils.isContextAlive(activity)) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
-                }
-            });
-        }
-    }
-
-    @Override
-    public boolean isAlive() {
-        return UiUtils.isContextAlive(getContext());
     }
 
     private class GetNotesLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<INote>> {
@@ -183,6 +160,36 @@ public class NotesTab extends Fragment implements ISusses<Integer> {
         @Override
         public void onLoaderReset(@NonNull final Loader<List<INote>> pLoader) {
             mAdapter.updateNotes(Collections.<INote>emptyList());
+        }
+    }
+
+    private class OnOperationUpdateSuccess implements ISuccess<Integer> {
+        @Override
+        public void onResult(final Integer pResult) {
+            onOperationFinished();
+        }
+
+        @Override
+        public void onError(final Throwable pThrowable) {
+            onOperationFinished();
+        }
+
+        @Override
+        public boolean isAlive() {
+            return UiUtils.isContextAlive(getContext());
+        }
+    }
+
+    private void onOperationFinished() {
+        final FragmentActivity activity = getActivity();
+
+        if (UiUtils.isContextAlive(activity)) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
+                }
+            });
         }
     }
 }

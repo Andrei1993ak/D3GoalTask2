@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.uiutils;
+package com.github.andrei1993ak.mentoring.task2.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
