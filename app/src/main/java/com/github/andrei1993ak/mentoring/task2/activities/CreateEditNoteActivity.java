@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.control;
+package com.github.andrei1993ak.mentoring.task2.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.core.ICallExecutor;
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
-import com.github.andrei1993ak.mentoring.task2.model.INote;
-import com.github.andrei1993ak.mentoring.task2.model.loaders.INotesLoaderFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 
@@ -91,7 +91,7 @@ public class CreateEditNoteActivity extends AppCompatActivity {
 
                 return true;
             } else {
-                final INotesLoaderFactory notesLoaderFactory = INotesLoaderFactory.Impl.get(this);
+                final INotesModelFactory notesLoaderFactory = INotesModelFactory.Impl.get(this);
 
                 final ICallable<Boolean> callable;
 

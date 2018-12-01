@@ -1,30 +1,20 @@
-package com.github.andrei1993ak.mentoring.task2.model.loaders.impl;
+package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory;
 
 import android.content.Context;
 import android.support.v4.content.Loader;
 
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.model.INote;
-import com.github.andrei1993ak.mentoring.task2.model.Note;
-import com.github.andrei1993ak.mentoring.task2.model.loaders.INotesLoaderFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.Note;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MemoryNotesLoaderFactory implements INotesLoaderFactory {
+public class MemoryNotesModelFactory implements INotesModelFactory {
 
     private static final Map<Long, INote> sNoteMap = new ConcurrentHashMap<>();
-    private static int idCounter = 0;
-
-    static {
-        final Note note = new Note(idCounter++, "Title1", "Description", true);
-        final Note note2 = new Note(idCounter++, "Title2", "Description", false);
-        final Note note3 = new Note(idCounter++, "Title3", "Description", true);
-        sNoteMap.put(note.getId(), note);
-        sNoteMap.put(note2.getId(), note2);
-        sNoteMap.put(note3.getId(), note3);
-    }
 
     @Override
     public Loader<List<INote>> getAllNotesLoader(final Context pContext) {
@@ -67,7 +57,7 @@ public class MemoryNotesLoaderFactory implements INotesLoaderFactory {
 
             @Override
             public Boolean call() {
-                final Note note = new Note(idCounter++, pTitle, pDescription, pIsFavourite);
+                final Note note = new Note(System.currentTimeMillis(), pTitle, pDescription, pIsFavourite);
 
                 return sNoteMap.put(note.getId(), note) != null;
             }

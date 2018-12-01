@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.control;
+package com.github.andrei1993ak.mentoring.task2.activities.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

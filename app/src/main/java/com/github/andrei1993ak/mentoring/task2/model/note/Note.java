@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.model;
+package com.github.andrei1993ak.mentoring.task2.model.note;
 
 public class Note implements INote {
 

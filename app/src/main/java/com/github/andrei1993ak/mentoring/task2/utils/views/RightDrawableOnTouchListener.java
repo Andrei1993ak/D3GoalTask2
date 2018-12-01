@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.utils;
+package com.github.andrei1993ak.mentoring.task2.utils.views;
 
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;

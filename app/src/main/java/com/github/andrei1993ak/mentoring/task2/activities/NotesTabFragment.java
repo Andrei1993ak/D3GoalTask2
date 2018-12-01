@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.control;
+package com.github.andrei1993ak.mentoring.task2.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,12 +20,12 @@ import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.core.ICallExecutor;
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
-import com.github.andrei1993ak.mentoring.task2.model.INote;
-import com.github.andrei1993ak.mentoring.task2.model.adapters.NotesAdapter;
-import com.github.andrei1993ak.mentoring.task2.model.loaders.INotesLoaderFactory;
-import com.github.andrei1993ak.mentoring.task2.utils.ContextMenuRecyclerView;
+import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.adapters.NotesAdapter;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.utils.views.ContextMenuRecyclerView;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
-import com.github.andrei1993ak.mentoring.task2.utils.VerticalSpaceItemDecoration;
+import com.github.andrei1993ak.mentoring.task2.utils.views.VerticalSpaceItemDecoration;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NotesTab extends Fragment {
+public class NotesTabFragment extends Fragment {
     private final static int GET_NOTES_LOADER_ID = 0;
 
     private static final String IS_FAVOURITE_KEY = "IS_FAVOURITE_KEY";
@@ -118,7 +118,7 @@ public class NotesTab extends Fragment {
         final ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
 
         if (item.getItemId() == R.id.action_delete_note) {
-            final ICallable<Integer> deleteNoteCallable = INotesLoaderFactory.Impl.get(getContext()).getDeleteNoteCallable(info.id);
+            final ICallable<Integer> deleteNoteCallable = INotesModelFactory.Impl.get(getContext()).getDeleteNoteCallable(info.id);
             ICallExecutor.Impl.newInstance(deleteNoteCallable).enqueue(new OnOperationUpdateSuccess());
 
             return true;
@@ -141,7 +141,7 @@ public class NotesTab extends Fragment {
 
             final Context context = getContext();
 
-            final INotesLoaderFactory notesLoaderFactory = INotesLoaderFactory.Impl.get(context);
+            final INotesModelFactory notesLoaderFactory = INotesModelFactory.Impl.get(context);
 
             if (mIsFavourite) {
                 loader = notesLoaderFactory.getFavouriteNotesLoader(context);

@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.control;
+package com.github.andrei1993ak.mentoring.task2.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.activities.settings.SettingsActivity;
 
 public class NotesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -53,10 +54,10 @@ public class NotesActivity extends AppCompatActivity
 
         mTabHost.addTab(
                 mTabHost.newTabSpec(allNotesString).setIndicator(allNotesString, null),
-                NotesTab.class, NotesTab.getAllNotesArguments());
+                NotesTabFragment.class, NotesTabFragment.getAllNotesArguments());
         mTabHost.addTab(
                 mTabHost.newTabSpec(favouriteNotesString).setIndicator(favouriteNotesString, null),
-                NotesTab.class, NotesTab.getFavouritesNotesArguments());
+                NotesTabFragment.class, NotesTabFragment.getFavouritesNotesArguments());
     }
 
     private void goToCreateNote() {

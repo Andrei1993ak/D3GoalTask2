@@ -1,7 +1,8 @@
-package com.github.andrei1993ak.mentoring.task2.model.adapters;
+package com.github.andrei1993ak.mentoring.task2.model.note.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.model.INote;
-import com.github.andrei1993ak.mentoring.task2.utils.RightDrawableOnTouchListener;
+import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.utils.views.RightDrawableOnTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return mNotes.get(position).getId();
     }
 
-    public void updateNotes(final List<INote> pUpdatedNotes) {
+    public void updateNotes(@Nullable final List<INote> pUpdatedNotes) {
         mNotes.clear();
-        mNotes.addAll(pUpdatedNotes);
+
+        if (pUpdatedNotes != null) {
+            mNotes.addAll(pUpdatedNotes);
+        }
+
         notifyDataSetChanged();
     }
 

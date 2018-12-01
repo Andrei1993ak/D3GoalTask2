@@ -1,12 +1,12 @@
-package com.github.andrei1993ak.mentoring.task2.control;
+package com.github.andrei1993ak.mentoring.task2.activities.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.model.loaders.ICurrentStorageTypeHolder;
-import com.github.andrei1993ak.mentoring.task2.model.loaders.StorageTypeResolver;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.StorageTypeResolver;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -20,7 +20,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         if (key.equals(getString(R.string.storage_pref_key))) {
-            final String selectedStorageType = sharedPreferences.getString(key, getString(R.string.storageoptions_stub));
+            final String selectedStorageType = sharedPreferences.getString(key, getString(R.string.storageoptions_preferences));
             final int selected = StorageTypeResolver.resolveType(getActivity(), selectedStorageType);
             ICurrentStorageTypeHolder.Impl.get(getActivity()).setCurrentItem(selected);
         }
