@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
+        android:defaultValue="@string/storageoptions_database"
         android:entries="@array/storageOptions"
         android:entryValues="@array/storageOptions"
         android:key="@string/storage_pref_key"

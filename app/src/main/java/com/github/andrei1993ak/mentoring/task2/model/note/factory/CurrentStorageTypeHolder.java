@@ -10,7 +10,7 @@ public class CurrentStorageTypeHolder implements ICurrentStorageTypeHolder {
     private int mCurrentItem;
 
     public CurrentStorageTypeHolder(final Context pContext) {
-        mCurrentItem = StorageTypeResolver.resolveType(pContext, PreferenceManager.getDefaultSharedPreferences(pContext).getString(pContext.getString(R.string.storage_pref_key), pContext.getString(R.string.storageoptions_preferences)));
+        mCurrentItem = StorageTypeResolver.resolveType(pContext, PreferenceManager.getDefaultSharedPreferences(pContext).getString(pContext.getString(R.string.storage_pref_key), pContext.getString(R.string.storageoptions_database)));
     }
 
     @Override

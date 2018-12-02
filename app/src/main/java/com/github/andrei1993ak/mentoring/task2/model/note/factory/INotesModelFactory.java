@@ -5,6 +5,7 @@ import android.support.v4.content.Loader;
 
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database.DataBaseNotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.preferences.PreferenceNoteModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory.MemoryNotesModelFactory;
 
@@ -30,8 +31,16 @@ public interface INotesModelFactory {
 
             if (selectedStorage == ICurrentStorageTypeHolder.StorageType.PREFERENCES) {
                 return new PreferenceNoteModelFactory();
-            } else {
+            } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.DATABASE) {
+                return new DataBaseNotesModelFactory();
+            } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.MEMORY) {
                 return new MemoryNotesModelFactory();
+            } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.LOCAL) {
+                return null;
+            } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.EXTERNAL) {
+                return null;
+            } else {
+                return null;
             }
         }
     }

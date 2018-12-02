@@ -15,7 +15,7 @@ public class Note implements INote {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return mId;
     }
 

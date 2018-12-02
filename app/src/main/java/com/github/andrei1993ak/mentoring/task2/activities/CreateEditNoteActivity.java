@@ -24,18 +24,21 @@ import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 public class CreateEditNoteActivity extends AppCompatActivity {
 
     private static final String EXTRA_NOTE_KEY = "noteKey";
+    private static final String EXTRA_NOTE_ID_KEY = "noteIdKey";
+    private static final String EXTRA_NOTE_FAVOURITE_KEY = "isFavouriteNoteIdKey";
     private static final String CREATE_NOTE_ACTION = "create_note";
     private static final String EDIT_NOTE_ACTION = "edit_note";
 
-    private INote mEditableNote;
     private boolean mIsCreationMode;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private AppCompatCheckBox mIsFavouriteCheckBox;
+    private long mId;
 
-    static Intent getCreateNoteIntent(final Context pContext) {
+    static Intent getCreateNoteIntent(final Context pContext, final boolean pIsFavouriteTabSelected) {
         final Intent intent = new Intent(pContext, CreateEditNoteActivity.class);
         intent.setAction(CREATE_NOTE_ACTION);
+        intent.putExtra(EXTRA_NOTE_FAVOURITE_KEY, pIsFavouriteTabSelected);
 
         return intent;
     }
@@ -44,6 +47,7 @@ public class CreateEditNoteActivity extends AppCompatActivity {
         final Intent intent = new Intent(pContext, CreateEditNoteActivity.class);
         intent.setAction(EDIT_NOTE_ACTION);
         intent.putExtra(EXTRA_NOTE_KEY, pINote);
+        intent.putExtra(EXTRA_NOTE_ID_KEY, pINote.getId());
 
         return intent;
     }
@@ -63,12 +67,14 @@ public class CreateEditNoteActivity extends AppCompatActivity {
 
         if (CREATE_NOTE_ACTION.equals(action)) {
             mIsCreationMode = true;
+            mIsFavouriteCheckBox.setChecked(intent.getBooleanExtra(EXTRA_NOTE_FAVOURITE_KEY, false));
         } else {
-            mEditableNote = (INote) intent.getSerializableExtra(EXTRA_NOTE_KEY);
+            mId = intent.getLongExtra(EXTRA_NOTE_ID_KEY, -1);
+            final INote editableNote = (INote) intent.getSerializableExtra(EXTRA_NOTE_KEY);
 
-            mTitleEditText.setText(mEditableNote.getTitle());
-            mDescriptionEditText.setText(mEditableNote.getDescription());
-            mIsFavouriteCheckBox.setChecked(mEditableNote.isFavourite());
+            mTitleEditText.setText(editableNote.getTitle());
+            mDescriptionEditText.setText(editableNote.getDescription());
+            mIsFavouriteCheckBox.setChecked(editableNote.isFavourite());
         }
     }
 
@@ -98,7 +104,7 @@ public class CreateEditNoteActivity extends AppCompatActivity {
                 if (mIsCreationMode) {
                     callable = notesLoaderFactory.getCreateNoteCallable(title, description, mIsFavouriteCheckBox.isChecked());
                 } else {
-                    callable = notesLoaderFactory.getUpdateNoteCallable(mEditableNote.getId(), title, description, mIsFavouriteCheckBox.isChecked());
+                    callable = notesLoaderFactory.getUpdateNoteCallable(mId, title, description, mIsFavouriteCheckBox.isChecked());
                 }
 
                 ICallExecutor.Impl.newInstance(callable).enqueue(new OperationSuccess());

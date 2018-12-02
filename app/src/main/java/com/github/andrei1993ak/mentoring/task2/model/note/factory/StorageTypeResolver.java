@@ -8,15 +8,12 @@ public class StorageTypeResolver {
 
     public static @ICurrentStorageTypeHolder.StorageType
     int resolveType(final Context pContext, final String pTypeString) {
-        final String databaseStorageString = pContext.getString(R.string.storageoptions_database);
         final String localFileStorageString = pContext.getString(R.string.storageoptions_local_file);
         final String externalFileStorageString = pContext.getString(R.string.storageoptions_sd_card_file);
         final String memoryStorageString = pContext.getString(R.string.storageoptions_memory);
         final String preferencesFileStorageString = pContext.getString(R.string.storageoptions_preferences);
 
-        if (databaseStorageString.equals(pTypeString)) {
-            return ICurrentStorageTypeHolder.StorageType.DATABASE;
-        } else if (localFileStorageString.equals(pTypeString)) {
+        if (localFileStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.LOCAL;
         } else if (memoryStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.MEMORY;
@@ -25,7 +22,8 @@ public class StorageTypeResolver {
         } else if (preferencesFileStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.PREFERENCES;
         } else {
-            return ICurrentStorageTypeHolder.StorageType.UNKNOWN;
+            return ICurrentStorageTypeHolder.StorageType.DATABASE;
         }
+
     }
 }

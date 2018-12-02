@@ -21,6 +21,8 @@ public class NotesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentTabHost mTabHost;
+    private String mAllNotesString;
+    private String mFavouriteNotesString;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -33,7 +35,8 @@ public class NotesActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                goToCreateNote();
+                final String currentTabTag = mTabHost.getCurrentTabTag();
+                goToCreateNote(mFavouriteNotesString.equals(currentTabTag));
             }
         });
 
@@ -49,19 +52,19 @@ public class NotesActivity extends AppCompatActivity
         mTabHost = findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
-        final String allNotesString = getResources().getString(R.string.all_notes);
-        final String favouriteNotesString = getResources().getString(R.string.favourite_notes);
+        mAllNotesString = getResources().getString(R.string.all_notes);
+        mFavouriteNotesString = getResources().getString(R.string.favourite_notes);
 
         mTabHost.addTab(
-                mTabHost.newTabSpec(allNotesString).setIndicator(allNotesString, null),
+                mTabHost.newTabSpec(mAllNotesString).setIndicator(mAllNotesString, null),
                 NotesTabFragment.class, NotesTabFragment.getAllNotesArguments());
         mTabHost.addTab(
-                mTabHost.newTabSpec(favouriteNotesString).setIndicator(favouriteNotesString, null),
+                mTabHost.newTabSpec(mFavouriteNotesString).setIndicator(mFavouriteNotesString, null),
                 NotesTabFragment.class, NotesTabFragment.getFavouritesNotesArguments());
     }
 
-    private void goToCreateNote() {
-        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this));
+    private void goToCreateNote(final boolean isFavouriteTabSelected) {
+        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this, isFavouriteTabSelected));
     }
 
     @Override

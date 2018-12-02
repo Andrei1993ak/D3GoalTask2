@@ -10,7 +10,6 @@ import static com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurren
 import static com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder.StorageType.LOCAL;
 import static com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder.StorageType.MEMORY;
 import static com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder.StorageType.PREFERENCES;
-import static com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder.StorageType.UNKNOWN;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public interface ICurrentStorageTypeHolder {
@@ -33,9 +32,8 @@ public interface ICurrentStorageTypeHolder {
     }
 
     @Retention(SOURCE)
-    @IntDef({LOCAL, DATABASE, UNKNOWN, EXTERNAL, PREFERENCES, MEMORY})
+    @IntDef({LOCAL, DATABASE, EXTERNAL, PREFERENCES, MEMORY})
     @interface StorageType {
-        int UNKNOWN = -1;
         int LOCAL = 0;
         int DATABASE = 1;
         int EXTERNAL = 2;

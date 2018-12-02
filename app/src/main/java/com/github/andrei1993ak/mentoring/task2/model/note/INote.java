@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public interface INote extends Serializable {
 
-    long getId();
+    Long getId();
 
     String getTitle();
 
