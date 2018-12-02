@@ -1,11 +1,13 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.v4.content.Loader;
 
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database.DataBaseNotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.file.FileNoteModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.preferences.PreferenceNoteModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory.MemoryNotesModelFactory;
 
@@ -31,16 +33,14 @@ public interface INotesModelFactory {
 
             if (selectedStorage == ICurrentStorageTypeHolder.StorageType.PREFERENCES) {
                 return new PreferenceNoteModelFactory();
-            } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.DATABASE) {
-                return new DataBaseNotesModelFactory();
             } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.MEMORY) {
                 return new MemoryNotesModelFactory();
             } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.LOCAL) {
-                return null;
+                return new FileNoteModelFactory(pContext.getFilesDir());
             } else if (selectedStorage == ICurrentStorageTypeHolder.StorageType.EXTERNAL) {
-                return null;
+                return new FileNoteModelFactory(Environment.getExternalStorageDirectory());
             } else {
-                return null;
+                return new DataBaseNotesModelFactory();
             }
         }
     }

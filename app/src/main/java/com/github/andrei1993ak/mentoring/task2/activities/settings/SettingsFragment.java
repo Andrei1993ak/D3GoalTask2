@@ -1,8 +1,14 @@
 package com.github.andrei1993ak.mentoring.task2.activities.settings;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder;
@@ -10,11 +16,26 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.StorageTypeRes
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 1;
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
+
+        final Bundle arguments = getArguments();
+
+        if (arguments == null || !arguments.getBoolean(SettingsActivity.SKIP_ASKING_PERMISSIONS, true)) {
+            checkPermissionReadStorage(getActivity());
+        }
+
+        if (permissionNeeded(getActivity())) {
+            final ListPreference preference = (ListPreference) findPreference(getString(R.string.storage_pref_key));
+            final String[] limitedOptions = getResources().getStringArray(R.array.storageLimitedOptions);
+            preference.setEntries(limitedOptions);
+            preference.setEntryValues(limitedOptions);
+        }
     }
 
     @Override
@@ -39,5 +60,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
 
+    }
+
+    public void checkPermissionReadStorage(final Activity activity) {
+        if (permissionNeeded(activity)) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_STORAGE);
+        }
+    }
+
+    private boolean permissionNeeded(final Activity activity) {
+        return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
     }
 }

@@ -12,12 +12,6 @@ public class NoteRecord extends SugarRecord<NoteRecord> implements INote {
     public NoteRecord() {
     }
 
-    public NoteRecord(final String title, final String description, final boolean isFavourite) {
-        this.title = title;
-        this.description = description;
-        this.isFavourite = isFavourite;
-    }
-
     @Override
     public String getTitle() {
         return title;
