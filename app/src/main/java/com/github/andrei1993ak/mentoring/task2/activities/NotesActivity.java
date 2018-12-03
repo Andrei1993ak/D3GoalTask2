@@ -1,45 +1,31 @@
 package com.github.andrei1993ak.mentoring.task2.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.activities.settings.SettingsActivity;
+import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 
-public class NotesActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class NotesActivity extends AppCompatActivity implements IAppNavigator {
 
-    private FragmentTabHost mTabHost;
-    private String mAllNotesString;
-    private String mFavouriteNotesString;
+    static final String SKIP_ASKING_PERMISSIONS = "skipAskingPermissions";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_notes);
+
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        final FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                final String currentTabTag = mTabHost.getCurrentTabTag();
-                goToCreateNote(mFavouriteNotesString.equals(currentTabTag));
-            }
-        });
-
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -47,24 +33,13 @@ public class NotesActivity extends AppCompatActivity
         toggle.syncState();
 
         final NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener());
 
-        mTabHost = findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-
-        mAllNotesString = getResources().getString(R.string.all_notes);
-        mFavouriteNotesString = getResources().getString(R.string.favourite_notes);
-
-        mTabHost.addTab(
-                mTabHost.newTabSpec(mAllNotesString).setIndicator(mAllNotesString, null),
-                NotesTabFragment.class, NotesTabFragment.getAllNotesArguments());
-        mTabHost.addTab(
-                mTabHost.newTabSpec(mFavouriteNotesString).setIndicator(mFavouriteNotesString, null),
-                NotesTabFragment.class, NotesTabFragment.getFavouritesNotesArguments());
+        goToDisplayingNotes();
     }
 
-    private void goToCreateNote(final boolean isFavouriteTabSelected) {
-        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this, isFavouriteTabSelected));
+    private void showFragment(final Fragment pFragment) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, pFragment).commit();
     }
 
     @Override
@@ -77,17 +52,60 @@ public class NotesActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        final int id = item.getItemId();
+    public void onRequestPermissionsResult(final int requestCode,
+                                           final String[] permissions, final int[] grantResults) {
+        final Bundle bundle = new Bundle();
+        bundle.putBoolean(SKIP_ASKING_PERMISSIONS, true);
+        showSettings(bundle);
+    }
 
-        if (id == R.id.nav_manage) {
-            startActivityForResult(new Intent(this, SettingsActivity.class), 222);
+    private void showSettings(final Bundle pBundle) {
+        final SettingsFragment settingsFragment = new SettingsFragment();
+
+        if (pBundle != null) {
+            settingsFragment.setArguments(pBundle);
         }
 
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        showFragment(settingsFragment);
+    }
+
+    @Override
+    public void goToCreationNote(final boolean pIsFavouritePreselected) {
+        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this, pIsFavouritePreselected));
+    }
+
+    @Override
+    public void goToEditNote(final INote pNote) {
+        startActivity(CreateEditNoteActivity.getEditNoteIntent(this, pNote));
+    }
+
+    @Override
+    public void goToDisplayingNotes() {
+        showFragment(new NotesFragment());
+    }
+
+    private class OnNavigationItemSelectedListener implements NavigationView.OnNavigationItemSelectedListener {
+
+        private final DrawerLayout mDrawer;
+
+        private OnNavigationItemSelectedListener() {
+            mDrawer = findViewById(R.id.drawer_layout);
+        }
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+            final int id = item.getItemId();
+
+            if (id == R.id.nav_manage) {
+                showSettings(null);
+            } else if (id == R.id.nav_notes) {
+                goToDisplayingNotes();
+            }
+
+            mDrawer.closeDrawer(GravityCompat.START);
+
+            return true;
+        }
     }
 }

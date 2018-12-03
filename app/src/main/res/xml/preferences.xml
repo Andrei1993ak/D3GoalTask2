@@ -6,5 +6,5 @@
         android:entryValues="@array/storageOptions"
         android:key="@string/storage_pref_key"
         android:summary="@string/storage_description"
-        android:title="@string/storage"></ListPreference>
+        android:title="@string/storage" />
 </PreferenceScreen>

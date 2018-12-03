@@ -35,10 +35,10 @@ public class CreateEditNoteActivity extends AppCompatActivity {
     private AppCompatCheckBox mIsFavouriteCheckBox;
     private long mId;
 
-    static Intent getCreateNoteIntent(final Context pContext, final boolean pIsFavouriteTabSelected) {
+    static Intent getCreateNoteIntent(final Context pContext, final boolean pIsFavouritePreselected) {
         final Intent intent = new Intent(pContext, CreateEditNoteActivity.class);
         intent.setAction(CREATE_NOTE_ACTION);
-        intent.putExtra(EXTRA_NOTE_FAVOURITE_KEY, pIsFavouriteTabSelected);
+        intent.putExtra(EXTRA_NOTE_FAVOURITE_KEY, pIsFavouritePreselected);
 
         return intent;
     }

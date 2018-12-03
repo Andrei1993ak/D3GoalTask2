@@ -31,11 +31,6 @@
             android:name=".activities.CreateEditNoteActivity"
             android:label="@string/manage_note"
             android:parentActivityName=".activities.NotesActivity"></activity>
-
-        <activity
-            android:name=".activities.settings.SettingsActivity"
-            android:label="@string/settings"
-            android:parentActivityName=".activities.NotesActivity"></activity>
     </application>
 
 </manifest>

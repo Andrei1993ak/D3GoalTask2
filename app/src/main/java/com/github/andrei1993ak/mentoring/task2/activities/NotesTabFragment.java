@@ -125,7 +125,11 @@ public class NotesTabFragment extends Fragment {
         } else if (item.getItemId() == R.id.action_edit_note) {
             final INote note = mAdapter.getItem(info.position);
 
-            startActivity(CreateEditNoteActivity.getEditNoteIntent(getContext(), note));
+            final FragmentActivity activity = getActivity();
+
+            if(activity instanceof IAppNavigator){
+                ((IAppNavigator) activity).goToEditNote(note);
+            }
 
             return true;
         }

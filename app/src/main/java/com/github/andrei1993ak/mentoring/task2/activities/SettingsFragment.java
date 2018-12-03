@@ -1,32 +1,30 @@
-package com.github.andrei1993ak.mentoring.task2.activities.settings;
+package com.github.andrei1993ak.mentoring.task2.activities;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.PreferenceFragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.StorageTypeResolver;
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 1;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        addPreferencesFromResource(R.xml.preferences);
+    public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
 
         final Bundle arguments = getArguments();
 
-        if (arguments == null || !arguments.getBoolean(SettingsActivity.SKIP_ASKING_PERMISSIONS, true)) {
+        if (arguments == null || !arguments.getBoolean(NotesActivity.SKIP_ASKING_PERMISSIONS, true)) {
             checkPermissionReadStorage(getActivity());
         }
 
