@@ -12,11 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNoteFragment;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.ShowNotesFragment;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 
-public class NotesActivity extends AppCompatActivity implements IAppNavigator {
-
-    static final String SKIP_ASKING_PERMISSIONS = "skipAskingPermissions";
+public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -38,13 +39,10 @@ public class NotesActivity extends AppCompatActivity implements IAppNavigator {
         goToDisplayingNotes();
     }
 
-    private void showFragment(final Fragment pFragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, pFragment).commit();
-    }
-
     @Override
     public void onBackPressed() {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -53,36 +51,28 @@ public class NotesActivity extends AppCompatActivity implements IAppNavigator {
     }
 
     @Override
-    public void onRequestPermissionsResult(final int requestCode,
-                                           final String[] permissions, final int[] grantResults) {
-        final Bundle bundle = new Bundle();
-        bundle.putBoolean(SKIP_ASKING_PERMISSIONS, true);
-        showSettings(bundle);
-    }
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        showFragment(SettingsFragment.getInstance(false));
 
-    private void showSettings(final Bundle pBundle) {
-        final SettingsFragment settingsFragment = new SettingsFragment();
-
-        if (pBundle != null) {
-            settingsFragment.setArguments(pBundle);
-        }
-
-        showFragment(settingsFragment);
     }
 
     @Override
     public void goToCreationNote(final boolean pIsFavouritePreselected) {
-        startActivity(CreateEditNoteActivity.getCreateNoteIntent(this, pIsFavouritePreselected));
+        showFragment(CreateEditNoteFragment.getCreationInstance(pIsFavouritePreselected));
     }
 
     @Override
     public void goToEditNote(final INote pNote) {
-        startActivity(CreateEditNoteActivity.getEditNoteIntent(this, pNote));
+        showFragment(CreateEditNoteFragment.getEditInstance(pNote));
     }
 
     @Override
     public void goToDisplayingNotes() {
-        showFragment(new NotesFragment());
+        showFragment(new ShowNotesFragment());
+    }
+
+    private void showFragment(final Fragment pFragment) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, pFragment).commit();
     }
 
     private class OnNavigationItemSelectedListener implements NavigationView.OnNavigationItemSelectedListener {
@@ -98,7 +88,7 @@ public class NotesActivity extends AppCompatActivity implements IAppNavigator {
             final int id = item.getItemId();
 
             if (id == R.id.nav_manage) {
-                showSettings(null);
+                showFragment(SettingsFragment.getInstance(true));
             } else if (id == R.id.nav_notes) {
                 goToDisplayingNotes();
             }
