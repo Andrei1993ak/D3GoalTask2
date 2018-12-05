@@ -28,7 +28,10 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFac
 import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 
-public class CreateEditNoteFragment extends Fragment {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class CreateEditNoteFragment extends Fragment implements ITitled {
 
     private static final String EXTRA_NOTE_KEY = "noteKey";
     private static final String EXTRA_NOTE_ID_KEY = "noteIdKey";
@@ -38,9 +41,16 @@ public class CreateEditNoteFragment extends Fragment {
     private static final String ACTION_KEY = "action";
 
     private boolean mIsCreationMode;
-    private EditText mTitleEditText;
-    private EditText mDescriptionEditText;
-    private AppCompatCheckBox mIsFavouriteCheckBox;
+
+    @BindView(R.id.create_edit_note_title)
+    EditText mTitleEditText;
+
+    @BindView(R.id.create_edit_note_description)
+    EditText mDescriptionEditText;
+
+    @BindView(R.id.create_edit_note_is_favouriote_check_box)
+    AppCompatCheckBox mIsFavouriteCheckBox;
+
     private long mId;
 
     public static CreateEditNoteFragment getCreationInstance(final boolean pIsFavouritePreselected) {
@@ -78,10 +88,7 @@ public class CreateEditNoteFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        mTitleEditText = view.findViewById(R.id.create_edit_note_title);
-        mDescriptionEditText = view.findViewById(R.id.create_edit_note_description);
-        mIsFavouriteCheckBox = view.findViewById(R.id.create_edit_note_is_favouriote_check_box);
+        ButterKnife.bind(this, view);
 
         final Bundle arguments = getArguments();
 
@@ -152,6 +159,11 @@ public class CreateEditNoteFragment extends Fragment {
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    public int getTitleResId() {
+        return R.string.manage_note;
     }
 
     private class OperationSuccess implements ISuccess<Boolean> {

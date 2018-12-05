@@ -15,7 +15,7 @@ import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ICurrentStorageTypeHolder;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.StorageTypeResolver;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, ITitled {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SKIP_ASKING_PERMISSIONS = "skipAskingPermissions";
@@ -88,5 +88,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private boolean permissionNeeded(final Activity activity) {
         return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public int getTitleResId() {
+        return R.string.settings;
     }
 }

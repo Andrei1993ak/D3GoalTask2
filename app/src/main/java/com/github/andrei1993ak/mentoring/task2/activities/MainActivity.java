@@ -13,39 +13,51 @@ import android.view.MenuItem;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNoteFragment;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.ITitled;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.NotesFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements IAppNavigator {
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawer;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_notes);
+        ButterKnife.bind(this);
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initVIews();
+        goToDisplayingNotes();
+    }
 
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    private void initVIews() {
+        setSupportActionBar(mToolbar);
+
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        final NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener());
-
-        goToDisplayingNotes();
     }
 
     @Override
     public void onBackPressed() {
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -73,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
     private void showFragment(final Fragment pFragment) {
         getSupportFragmentManager().beginTransaction().replace(R.id.content, pFragment).commit();
+
+        if (pFragment instanceof ITitled) {
+            mToolbar.setTitle(((ITitled) pFragment).getTitleResId());
+        } else {
+            mToolbar.setTitle(R.string.app_name);
+        }
     }
 
     private class OnNavigationItemSelectedListener implements NavigationView.OnNavigationItemSelectedListener {
