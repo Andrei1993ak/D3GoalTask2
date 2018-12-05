@@ -13,7 +13,7 @@ import android.view.MenuItem;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNoteFragment;
-import com.github.andrei1993ak.mentoring.task2.activities.fragments.ShowNotesFragment;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.NotesFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         showFragment(SettingsFragment.getInstance(false));
-
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
     @Override
     public void goToDisplayingNotes() {
-        showFragment(new ShowNotesFragment());
+        showFragment(new NotesFragment());
     }
 
     private void showFragment(final Fragment pFragment) {

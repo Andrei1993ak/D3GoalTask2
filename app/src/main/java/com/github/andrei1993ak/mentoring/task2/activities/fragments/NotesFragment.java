@@ -36,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ShowNotesFragment extends Fragment {
+public class NotesFragment extends Fragment {
 
     private FragmentTabHost mTabHost;
     private String mAllNotesString;

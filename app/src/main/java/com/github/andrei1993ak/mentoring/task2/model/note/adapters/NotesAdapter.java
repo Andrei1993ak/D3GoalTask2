@@ -24,7 +24,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     private final LayoutInflater mLayoutInflater;
     private final List<INote> mNotes;
-    private View.OnCreateContextMenuListener mOnCreateContextMenuListener;
 
     public NotesAdapter(final Context pContext) {
         mLayoutInflater = LayoutInflater.from(pContext);
@@ -62,7 +61,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return mNotes.size();
     }
 
-    public INote getItem(int pPosition) {
+    public INote getItem(final int pPosition) {
         return mNotes.get(pPosition);
     }
 
@@ -76,10 +75,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
         NotesViewHolder(@NonNull final View itemView) {
             super(itemView);
-
-            if (mOnCreateContextMenuListener != null) {
-                itemView.setOnCreateContextMenuListener(mOnCreateContextMenuListener);
-            }
 
             ButterKnife.bind(this, itemView);
 
