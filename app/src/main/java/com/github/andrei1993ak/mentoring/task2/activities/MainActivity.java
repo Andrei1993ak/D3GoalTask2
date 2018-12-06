@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    private FragmentManager mSupportFragmentManager;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +43,12 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
         setContentView(R.layout.activity_notes);
         ButterKnife.bind(this);
 
+        mSupportFragmentManager = getSupportFragmentManager();
+
         initVIews();
         goToDisplayingNotes();
+
+        mSupportFragmentManager.addOnBackStackChangedListener(new OnBackStackChangedListener());
     }
 
     private void initVIews() {
@@ -65,27 +73,37 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-        showFragment(SettingsFragment.getInstance(false));
+        showFragment(SettingsFragment.getInstance(false), true);
     }
 
     @Override
     public void goToCreationNote(final boolean pIsFavouritePreselected) {
-        showFragment(CreateEditNoteFragment.getCreationInstance(pIsFavouritePreselected));
+        showFragment(CreateEditNoteFragment.getCreationInstance(pIsFavouritePreselected), true);
     }
 
     @Override
     public void goToEditNote(final INote pNote) {
-        showFragment(CreateEditNoteFragment.getEditInstance(pNote));
+        showFragment(CreateEditNoteFragment.getEditInstance(pNote), true);
     }
 
     @Override
     public void goToDisplayingNotes() {
-        showFragment(new NotesFragment());
+        showFragment(new NotesFragment(), false);
     }
 
-    private void showFragment(final Fragment pFragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, pFragment).commit();
+    private void showFragment(final Fragment pFragment, final boolean pAddToBackStack) {
+        final FragmentTransaction fragmentTransaction = mSupportFragmentManager.beginTransaction();
 
+        if (pAddToBackStack) {
+            fragmentTransaction.addToBackStack(pFragment.getClass().getSimpleName());
+        }
+
+        fragmentTransaction.replace(R.id.content, pFragment).commit();
+
+        updateToolbar(pFragment);
+    }
+
+    private void updateToolbar(final Fragment pFragment) {
         if (pFragment instanceof ITitled) {
             mToolbar.setTitle(((ITitled) pFragment).getTitleResId());
         } else {
@@ -106,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
             final int id = item.getItemId();
 
             if (id == R.id.nav_manage) {
-                showFragment(SettingsFragment.getInstance(true));
+                showFragment(SettingsFragment.getInstance(true), true);
             } else if (id == R.id.nav_notes) {
                 goToDisplayingNotes();
             }
@@ -114,6 +132,13 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
             mDrawer.closeDrawer(GravityCompat.START);
 
             return true;
+        }
+    }
+
+    private class OnBackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
+        @Override
+        public void onBackStackChanged() {
+            updateToolbar(mSupportFragmentManager.findFragmentById(R.id.content));
         }
     }
 }
