@@ -26,8 +26,8 @@ import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNo
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.ITitled;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.NotesFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
-import com.github.andrei1993ak.mentoring.task2.fcm.PushNotificationDataKeys;
 import com.github.andrei1993ak.mentoring.task2.fcm.NotesFirebaseMessagingService;
+import com.github.andrei1993ak.mentoring.task2.fcm.PushNotificationDataKeys;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 
@@ -63,8 +63,11 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
         LocalBroadcastManager.getInstance(this).registerReceiver(mPushNotificationBroadcastReceiver, new IntentFilter(NotesFirebaseMessagingService.PUSH_MESSAGE_BROADCAST));
 
         initViews();
-        goToDisplayingNotes();
-        checkPushNotification();
+
+        if (savedInstanceState == null) {
+            goToDisplayingNotes();
+            checkPushNotification();
+        }
     }
 
     @Override
@@ -180,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
                 final String title = extras.getString(PushNotificationDataKeys.TITLE);
                 final String description = extras.getString(PushNotificationDataKeys.DESCRIPTION);
 
-                if(UiUtils.isContextAlive(MainActivity.this)) {
+                if (UiUtils.isContextAlive(MainActivity.this)) {
                     onBroadCastReceived(title, description);
                 }
             }
