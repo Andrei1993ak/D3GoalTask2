@@ -35,7 +35,9 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
 
     private static final String EXTRA_NOTE_KEY = "noteKey";
     private static final String EXTRA_NOTE_ID_KEY = "noteIdKey";
-    private static final String EXTRA_NOTE_FAVOURITE_KEY = "isFavouriteNoteIdKey";
+    private static final String EXTRA_NOTE_FAVOURITE_KEY = "isFavouriteNoteKey";
+    private static final String EXTRA_NOTE_TITLE_KEY = "titletNoteKey";
+    private static final String EXTRA_NOTE_DESCRIPTION_KEY = "descriptionNoteKey";
     private static final String CREATE_NOTE_ACTION = "create_note";
     private static final String EDIT_NOTE_ACTION = "edit_note";
     private static final String ACTION_KEY = "action";
@@ -53,11 +55,14 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
 
     private long mId;
 
-    public static CreateEditNoteFragment getCreationInstance(final boolean pIsFavouritePreselected) {
+    public static CreateEditNoteFragment getCreationInstance(final boolean pIsFavouritePreselected,
+                                                             final String pTitle, final String pDescription) {
         final Bundle args = new Bundle();
 
         args.putString(ACTION_KEY, CREATE_NOTE_ACTION);
         args.putBoolean(EXTRA_NOTE_FAVOURITE_KEY, pIsFavouritePreselected);
+        args.putString(EXTRA_NOTE_TITLE_KEY, pTitle == null ? TextUtils.Constants.EMPTY : pTitle);
+        args.putString(EXTRA_NOTE_DESCRIPTION_KEY, pDescription == null ? TextUtils.Constants.EMPTY : pDescription);
 
         final CreateEditNoteFragment createEditNoteFragment = new CreateEditNoteFragment();
         createEditNoteFragment.setArguments(args);
@@ -98,6 +103,8 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
             if (CREATE_NOTE_ACTION.equals(action)) {
                 mIsCreationMode = true;
                 mIsFavouriteCheckBox.setChecked(arguments.getBoolean(EXTRA_NOTE_FAVOURITE_KEY, false));
+                mTitleEditText.setText(arguments.getString(EXTRA_NOTE_TITLE_KEY));
+                mDescriptionEditText.setText(arguments.getString(EXTRA_NOTE_DESCRIPTION_KEY));
             } else {
                 mId = arguments.getLong(EXTRA_NOTE_ID_KEY, -1);
                 final INote editableNote = (INote) arguments.getSerializable(EXTRA_NOTE_KEY);

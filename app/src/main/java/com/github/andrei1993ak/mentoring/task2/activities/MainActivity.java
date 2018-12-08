@@ -1,11 +1,19 @@
 package com.github.andrei1993ak.mentoring.task2.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +26,10 @@ import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNo
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.ITitled;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.NotesFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
+import com.github.andrei1993ak.mentoring.task2.fcm.PushNotificationDataKeys;
+import com.github.andrei1993ak.mentoring.task2.fcm.NotesFirebaseMessagingService;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
     NavigationView navigationView;
 
     private FragmentManager mSupportFragmentManager;
+    private Handler mHandler;
+    private PushNotificationBroadcastReceiver mPushNotificationBroadcastReceiver;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -43,19 +56,43 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
         setContentView(R.layout.activity_notes);
         ButterKnife.bind(this);
 
+        mPushNotificationBroadcastReceiver = new PushNotificationBroadcastReceiver();
+        mHandler = new Handler(Looper.getMainLooper());
         mSupportFragmentManager = getSupportFragmentManager();
-
-        initVIews();
-        goToDisplayingNotes();
-
         mSupportFragmentManager.addOnBackStackChangedListener(new OnBackStackChangedListener());
+        LocalBroadcastManager.getInstance(this).registerReceiver(mPushNotificationBroadcastReceiver, new IntentFilter(NotesFirebaseMessagingService.PUSH_MESSAGE_BROADCAST));
+
+        initViews();
+        goToDisplayingNotes();
+        checkPushNotification();
     }
 
-    private void initVIews() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mPushNotificationBroadcastReceiver);
+    }
+
+    private void checkPushNotification() {
+        final Intent intent = getIntent();
+
+        if (intent != null) {
+            final Bundle extras = intent.getExtras();
+
+            if (extras != null) {
+                final String title = extras.getString(PushNotificationDataKeys.TITLE);
+                final String description = extras.getString(PushNotificationDataKeys.DESCRIPTION);
+
+                goToCreationNote(false, title, description);
+            }
+        }
+    }
+
+    private void initViews() {
         setSupportActionBar(mToolbar);
 
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -73,34 +110,39 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-        showFragment(SettingsFragment.getInstance(false), true);
+        replaceFragment(SettingsFragment.getInstance(false), true);
     }
 
     @Override
-    public void goToCreationNote(final boolean pIsFavouritePreselected) {
-        showFragment(CreateEditNoteFragment.getCreationInstance(pIsFavouritePreselected), true);
+    public void goToCreationNote(final boolean pIsFavourite, @Nullable final String pTile, @Nullable final String pDescription) {
+        replaceFragment(CreateEditNoteFragment.getCreationInstance(pIsFavourite, pTile, pDescription), true);
     }
 
     @Override
     public void goToEditNote(final INote pNote) {
-        showFragment(CreateEditNoteFragment.getEditInstance(pNote), true);
+        replaceFragment(CreateEditNoteFragment.getEditInstance(pNote), true);
     }
 
     @Override
     public void goToDisplayingNotes() {
-        showFragment(new NotesFragment(), false);
+        replaceFragment(new NotesFragment(), false);
     }
 
-    private void showFragment(final Fragment pFragment, final boolean pAddToBackStack) {
-        final FragmentTransaction fragmentTransaction = mSupportFragmentManager.beginTransaction();
+    private void replaceFragment(final Fragment pFragment, final boolean pAddToBackStack) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final FragmentTransaction fragmentTransaction = mSupportFragmentManager.beginTransaction();
 
-        if (pAddToBackStack) {
-            fragmentTransaction.addToBackStack(pFragment.getClass().getSimpleName());
-        }
+                if (pAddToBackStack) {
+                    fragmentTransaction.addToBackStack(pFragment.getClass().getSimpleName());
+                }
 
-        fragmentTransaction.replace(R.id.content, pFragment).commit();
+                fragmentTransaction.replace(R.id.content, pFragment).commit();
 
-        updateToolbar(pFragment);
+                updateToolbar(pFragment);
+            }
+        });
     }
 
     private void updateToolbar(final Fragment pFragment) {
@@ -108,6 +150,40 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
             mToolbar.setTitle(((ITitled) pFragment).getTitleResId());
         } else {
             mToolbar.setTitle(R.string.app_name);
+        }
+    }
+
+    private void onBroadCastReceived(final String pTitle, final String pDescription) {
+        final AddNotificationDialog addNotificationDialog = AddNotificationDialog.newInstance(pTitle);
+        addNotificationDialog.show(getFragmentManager(), AddNotificationDialog.class.getSimpleName());
+
+        addNotificationDialog.setOnClickListener(new AddNotificationDialog.OnClickListener() {
+            @Override
+            public void onYesClicked() {
+                goToCreationNote(false, pTitle, pDescription);
+            }
+
+            @Override
+            public void onSkipClicked() {
+
+            }
+        });
+    }
+
+    private class PushNotificationBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            final Bundle extras = intent.getExtras();
+
+            if (extras != null) {
+                final String title = extras.getString(PushNotificationDataKeys.TITLE);
+                final String description = extras.getString(PushNotificationDataKeys.DESCRIPTION);
+
+                if(UiUtils.isContextAlive(MainActivity.this)) {
+                    onBroadCastReceived(title, description);
+                }
+            }
         }
     }
 
@@ -124,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
             final int id = item.getItemId();
 
             if (id == R.id.nav_manage) {
-                showFragment(SettingsFragment.getInstance(true), true);
+                replaceFragment(SettingsFragment.getInstance(true), true);
             } else if (id == R.id.nav_notes) {
                 goToDisplayingNotes();
             }

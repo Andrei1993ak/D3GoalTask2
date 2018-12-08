@@ -28,4 +28,10 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="manage_note">Manage Note</string>
+
+    <string name="add_note_dialog_title">New Note received!</string>
+    <string name="add_note_dialog_body">Note %s received</string>
+    <string name="add_note_dialog_skip_button">Skip</string>
+    <string name="add_note_dialog_create_button">Create Note</string>
+
 </resources>

@@ -28,7 +28,7 @@
         </activity>
 
         <service
-            android:name=".fcm.MyFirebaseMessagingService"
+            android:name=".fcm.NotesFirebaseMessagingService"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

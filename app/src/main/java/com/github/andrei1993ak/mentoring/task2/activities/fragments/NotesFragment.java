@@ -62,7 +62,7 @@ public class NotesFragment extends Fragment implements ITitled {
             final FragmentActivity activity = getActivity();
 
             if (activity instanceof IAppNavigator) {
-                ((IAppNavigator) activity).goToCreationNote(mAdapter.isFavouriteTabActive(mNotesPager.getCurrentItem()));
+                ((IAppNavigator) activity).goToCreationNote(mAdapter.isFavouriteTabActive(mNotesPager.getCurrentItem()), null, null);
             }
         }
     }
