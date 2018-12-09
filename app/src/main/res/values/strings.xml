@@ -21,6 +21,7 @@
     <string name="storageoptions_database">Database</string>
     <string name="storageoptions_memory">Memory</string>
     <string name="storageoptions_preferences">Shared Preferences</string>
+    <string name="storageoptions_network">Internet</string>
 
     <string name="storage_pref_key">StorageKey</string>
     <string name="title_or_description_should_be_not_empty">Title or description should be not empty</string>

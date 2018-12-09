@@ -55,7 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             final FragmentActivity activity = getActivity();
 
             if (activity != null) {
-                final String selectedStorageType = sharedPreferences.getString(key, getString(R.string.storageoptions_preferences));
+                final String selectedStorageType = sharedPreferences.getString(key, getString(R.string.storageoptions_database));
                 final int selected = StorageTypeResolver.resolveType(activity, selectedStorageType);
                 ICurrentStorageTypeHolder.Impl.get(activity).setCurrentItem(selected);
             }

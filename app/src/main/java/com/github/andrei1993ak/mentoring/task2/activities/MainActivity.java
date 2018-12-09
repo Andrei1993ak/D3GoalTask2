@@ -29,6 +29,7 @@ import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFrag
 import com.github.andrei1993ak.mentoring.task2.fcm.NotesFirebaseMessagingService;
 import com.github.andrei1993ak.mentoring.task2.fcm.PushNotificationDataKeys;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 
 import butterknife.BindView;
@@ -87,7 +88,9 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
                 final String title = extras.getString(PushNotificationDataKeys.TITLE);
                 final String description = extras.getString(PushNotificationDataKeys.DESCRIPTION);
 
-                goToCreationNote(false, title, description);
+                if (!TextUtils.isEmpty(title) || !TextUtils.isEmpty(description)) {
+                    goToCreationNote(false, title, description);
+                }
             }
         }
     }

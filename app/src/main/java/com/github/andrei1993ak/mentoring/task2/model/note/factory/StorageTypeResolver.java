@@ -12,6 +12,7 @@ public class StorageTypeResolver {
         final String externalFileStorageString = pContext.getString(R.string.storageoptions_sd_card_file);
         final String memoryStorageString = pContext.getString(R.string.storageoptions_memory);
         final String preferencesFileStorageString = pContext.getString(R.string.storageoptions_preferences);
+        final String networkStorage = pContext.getString(R.string.storageoptions_network);
 
         if (localFileStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.LOCAL;
@@ -21,6 +22,8 @@ public class StorageTypeResolver {
             return ICurrentStorageTypeHolder.StorageType.EXTERNAL;
         } else if (preferencesFileStorageString.equals(pTypeString)) {
             return ICurrentStorageTypeHolder.StorageType.PREFERENCES;
+        } else if (networkStorage.equals(pTypeString)) {
+            return ICurrentStorageTypeHolder.StorageType.NETWORK;
         } else {
             return ICurrentStorageTypeHolder.StorageType.DATABASE;
         }
