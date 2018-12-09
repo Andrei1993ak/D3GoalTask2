@@ -12,4 +12,9 @@
         android:id="@+id/nav_manage"
         android:icon="@drawable/ic_menu_manage"
         android:title="@string/settings" />
+
+    <item
+        android:id="@+id/download_movie"
+        android:icon="@drawable/ic_file_download"
+        android:title="@string/intro_movie" />
 </menu>

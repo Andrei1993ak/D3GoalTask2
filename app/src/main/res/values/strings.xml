@@ -35,5 +35,6 @@
     <string name="add_note_dialog_body">Note %s received</string>
     <string name="add_note_dialog_skip_button">Skip</string>
     <string name="add_note_dialog_create_button">Create Note</string>
+    <string name="intro_movie">Download intro</string>
 
 </resources>
