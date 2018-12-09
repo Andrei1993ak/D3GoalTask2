@@ -2,7 +2,12 @@ package com.github.andrei1993ak.mentoring.task2.activities.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +32,9 @@ import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -132,7 +140,9 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.action_save) {
+        final int itemId = item.getItemId();
+
+        if (itemId == R.id.action_save) {
 
             final String title = mTitleEditText.getText().toString();
             final String description = mDescriptionEditText.getText().toString();
@@ -155,9 +165,59 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
 
                 ICallExecutor.Impl.newInstance(callable).enqueue(new OperationSuccess());
             }
+        } else if (itemId == R.id.action_share_note) {
+            final StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            saveScreenShot(getScreenShot());
+
+            final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(getScreenShotFile()));
+
+            startActivity(shareIntent);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private Bitmap getScreenShot() {
+        final FragmentActivity activity = getActivity();
+
+        if (UiUtils.isContextAlive(activity)) {
+            final View screenView = activity.getWindow().getDecorView().getRootView();
+            screenView.setDrawingCacheEnabled(true);
+            final Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+            screenView.setDrawingCacheEnabled(false);
+
+            return bitmap;
+        } else {
+            return null;
+        }
+
+    }
+
+    private void saveScreenShot(final Bitmap bm) {
+        final File file = getScreenShotFile();
+
+        try {
+            final FileOutputStream fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @NonNull
+    private File getScreenShotFile() {
+        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        final File dir = new File(dirPath);
+
+        if (!dir.exists())
+            dir.mkdirs();
+        return new File(dirPath, "note.jpg");
     }
 
     public static void hideKeyboardFrom(final Context context, final View view) {
