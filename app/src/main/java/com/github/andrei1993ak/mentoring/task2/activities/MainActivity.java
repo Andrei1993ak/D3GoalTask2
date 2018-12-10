@@ -1,13 +1,10 @@
 package com.github.andrei1993ak.mentoring.task2.activities;
 
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -26,6 +23,7 @@ import android.view.MenuItem;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNoteFragment;
+import com.github.andrei1993ak.mentoring.task2.activities.fragments.DownloadVideoFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.ITitled;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.NotesFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.SettingsFragment;
@@ -213,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
             } else if (id == R.id.nav_notes) {
                 goToDisplayingNotes();
             } else if (id == R.id.download_movie) {
-                startLoading();
+                goToDownloadVideoSection();
             }
 
             mDrawer.closeDrawer(GravityCompat.START);
@@ -222,19 +220,8 @@ public class MainActivity extends AppCompatActivity implements IAppNavigator {
         }
     }
 
-    private void startLoading() {
-        final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        final DownloadManager.Request request = new DownloadManager.Request(Uri.parse("https://r8---sn-cxauxaxjvh-hn9y.googlevideo.com/videoplayback?ratebypass=yes&ei=LlUNXNHPFsroDIG1h9gC&fvip=1&lmt=1540630026311114&txp=5531432&ipbits=0&c=WEB&requiressl=yes&source=youtube&dur=8346.946&pl=19&itag=22&key=cms1&ip=172.241.168.46&mime=video%2Fmp4&id=o-ACv3OnCefzPn6YIN9ABaLXyrwDU3lMv_RzFWLd8-y5Yh&expire=1544399246&sparams=dur,ei,expire,id,ip,ipbits,ipbypass,itag,lmt,mime,mip,mm,mn,ms,mv,pl,ratebypass,requiressl,source&signature=0F83ACF7DE3678AB95561BB738906135EB79BC60.20BA50A74EF9C41FE8B2936B5072DA1D44D320D6&video_id=MMPIjd0C5Uk&title=Coub+%D0%BB%D1%83%D1%87%D1%88%D0%B5%D0%B5+%D0%B7%D0%B0+2016+%D0%B3%D0%BE%D0%B4+-+coub+best&redirect_counter=1&rm=sn-5hndy76&fexp=23763603&req_id=37e912339e02a3ee&cms_redirect=yes&ipbypass=yes&mip=37.212.48.46&mm=31&mn=sn-cxauxaxjvh-hn9y&ms=au&mt=1544377606&mv=m"));
-        request.setDescription("Load and go!");
-        request.setTitle("Loading intro video");
-
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "video.ext");
-
-        if (manager != null) {
-            long id = manager.enqueue(request);
-        }
+    private void goToDownloadVideoSection() {
+        replaceFragment(new DownloadVideoFragment(), true);
     }
 
     private class OnBackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
