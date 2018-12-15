@@ -7,6 +7,7 @@ import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.Note;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.util.List;
 import java.util.Map;
@@ -17,12 +18,12 @@ public class MemoryNotesModelFactory implements INotesModelFactory {
     private static final Map<Long, INote> sNoteMap = new ConcurrentHashMap<>();
 
     @Override
-    public Loader<List<INote>> getAllNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
         return new MemoryLoader(pContext, sNoteMap.values(), false);
     }
 
     @Override
-    public Loader<List<INote>> getFavouriteNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
         return new MemoryLoader(pContext, sNoteMap.values(), true);
     }
 

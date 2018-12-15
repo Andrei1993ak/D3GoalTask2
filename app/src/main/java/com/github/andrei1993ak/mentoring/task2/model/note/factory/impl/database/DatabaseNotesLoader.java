@@ -2,14 +2,14 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.BaseExceptionWrapperLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseNotesLoader extends AsyncTaskLoader<List<INote>> {
+public class DatabaseNotesLoader extends BaseExceptionWrapperLoader<List<INote>> {
 
     private final boolean mIsFavouriteOnly;
 
@@ -20,7 +20,7 @@ public class DatabaseNotesLoader extends AsyncTaskLoader<List<INote>> {
     }
 
     @Override
-    public List<INote> loadInBackground() {
+    public List<INote> loadResultDataInBackground() throws Exception {
         final List<NoteRecord> noteList = NoteRecord.listAll(NoteRecord.class);
 
         final List<INote> resultList = new ArrayList<>();

@@ -7,6 +7,7 @@ import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.holders.ApiHolder;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.util.List;
 
@@ -17,12 +18,12 @@ import retrofit2.Response;
 public class NetworkNotesModelFactory implements INotesModelFactory {
 
     @Override
-    public Loader<List<INote>> getAllNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
         return new NetworkNotesLoader(pContext, false);
     }
 
     @Override
-    public Loader<List<INote>> getFavouriteNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
         return new NetworkNotesLoader(pContext, true);
     }
 

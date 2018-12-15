@@ -2,16 +2,15 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.BaseExceptionWrapperLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MemoryLoader extends AsyncTaskLoader<List<INote>> {
+public class MemoryLoader extends BaseExceptionWrapperLoader<List<INote>> {
 
     private final List<INote> mNotes;
 
@@ -31,9 +30,8 @@ public class MemoryLoader extends AsyncTaskLoader<List<INote>> {
         }
     }
 
-    @Nullable
     @Override
-    public List<INote> loadInBackground() {
+    public List<INote> loadResultDataInBackground() throws Exception {
         return mNotes;
     }
 }

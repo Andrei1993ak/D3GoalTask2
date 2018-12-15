@@ -6,6 +6,7 @@ import android.support.v4.content.Loader;
 import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.io.File;
 import java.util.List;
@@ -20,12 +21,12 @@ public class FileNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Loader<List<INote>> getAllNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
         return new FileLoader(pContext, mFile, false);
     }
 
     @Override
-    public Loader<List<INote>> getFavouriteNotesLoader(final Context pContext) {
+    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
         return new FileLoader(pContext, mFile, true);
     }
 

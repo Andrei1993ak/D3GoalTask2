@@ -241,6 +241,12 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
 
         @Override
         public void onError(final Throwable pThrowable) {
+            final Context context = getContext();
+
+            if (UiUtils.isContextAlive(context)) {
+                Toast.makeText(context, R.string.error_message, Toast.LENGTH_LONG).show();
+            }
+
             onOperationResult();
         }
 

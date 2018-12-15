@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.R;
 import com.github.andrei1993ak.mentoring.task2.activities.IAppNavigator;
@@ -24,6 +25,7 @@ import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.adapters.NotesAdapter;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.views.ContextMenuRecyclerView;
 import com.github.andrei1993ak.mentoring.task2.utils.views.VerticalSpaceItemDecoration;
@@ -134,11 +136,11 @@ public class NotesTabFragment extends Fragment {
         return super.onContextItemSelected(item);
     }
 
-    private class GetNotesLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<INote>> {
+    private class GetNotesLoaderCallbacks implements LoaderManager.LoaderCallbacks<ResultWrapper<List<INote>>> {
         @NonNull
         @Override
-        public Loader<List<INote>> onCreateLoader(final int pI, @Nullable final Bundle pBundle) {
-            final Loader<List<INote>> loader;
+        public Loader<ResultWrapper<List<INote>>> onCreateLoader(final int pI, @Nullable final Bundle pBundle) {
+            final Loader<ResultWrapper<List<INote>>> loader;
 
             final Context context = getContext();
 
@@ -154,12 +156,16 @@ public class NotesTabFragment extends Fragment {
         }
 
         @Override
-        public void onLoadFinished(@NonNull final Loader<List<INote>> pLoader, final List<INote> pINotes) {
-            mAdapter.updateNotes(pINotes);
+        public void onLoadFinished(@NonNull final Loader<ResultWrapper<List<INote>>> pLoader, final ResultWrapper<List<INote>> pResultWrapper) {
+            if (pResultWrapper == null || pResultWrapper.getException() != null) {
+                showError();
+            } else {
+                mAdapter.updateNotes(pResultWrapper.getResult());
+            }
         }
 
         @Override
-        public void onLoaderReset(@NonNull final Loader<List<INote>> pLoader) {
+        public void onLoaderReset(@NonNull final Loader<ResultWrapper<List<INote>>> pLoader) {
             mAdapter.updateNotes(Collections.<INote>emptyList());
         }
     }
@@ -172,12 +178,22 @@ public class NotesTabFragment extends Fragment {
 
         @Override
         public void onError(final Throwable pThrowable) {
+            showError();
+
             onOperationFinished();
         }
 
         @Override
         public boolean isAlive() {
             return UiUtils.isContextAlive(getContext());
+        }
+    }
+
+    private void showError() {
+        final Context context = getContext();
+
+        if (UiUtils.isContextAlive(context)) {
+            Toast.makeText(context, R.string.error_message, Toast.LENGTH_LONG).show();
         }
     }
 

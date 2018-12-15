@@ -16,9 +16,9 @@ import java.util.List;
 
 public interface INotesModelFactory {
 
-    Loader<List<INote>> getAllNotesLoader(final Context pContext);
+    Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext);
 
-    Loader<List<INote>> getFavouriteNotesLoader(final Context pContext);
+    Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext);
 
     ICallable<Integer> getDeleteNoteCallable(final long pNoteId);
 

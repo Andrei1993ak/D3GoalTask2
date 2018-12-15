@@ -1,15 +1,15 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.file;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.factory.BaseExceptionWrapperLoader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileLoader extends AsyncTaskLoader<List<INote>> {
+public class FileLoader extends BaseExceptionWrapperLoader<List<INote>> {
 
     private final File mFile;
     private final boolean mIsFavouriteOnly;
@@ -22,7 +22,7 @@ public class FileLoader extends AsyncTaskLoader<List<INote>> {
     }
 
     @Override
-    public List<INote> loadInBackground() {
+    public List<INote> loadResultDataInBackground() throws Exception {
         final List<INote> noteList = new GetAllFileNoteCallable(mFile).call();
 
         if (mIsFavouriteOnly) {
