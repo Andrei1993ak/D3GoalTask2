@@ -9,25 +9,23 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.activities.EditNotificationDialog;
 import com.github.andrei1993ak.mentoring.task2.activities.IAppNavigator;
-import com.github.andrei1993ak.mentoring.task2.core.ICallExecutor;
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
+import com.github.andrei1993ak.mentoring.task2.model.note.adapters.IOnNoteActionsClickListener;
 import com.github.andrei1993ak.mentoring.task2.model.note.adapters.NotesAdapter;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
-import com.github.andrei1993ak.mentoring.task2.utils.views.ContextMenuRecyclerView;
 import com.github.andrei1993ak.mentoring.task2.utils.views.VerticalSpaceItemDecoration;
 
 import java.util.Collections;
@@ -35,10 +33,16 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
-public class NotesTabFragment extends Fragment {
+public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnPageSelectedListener {
     private final static int GET_NOTES_LOADER_ID = 0;
     private static final String IS_FAVOURITE_KEY = "IS_FAVOURITE_KEY";
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     static NotesTabFragment newInstance(final boolean pIsFavourite) {
         final NotesTabFragment notesTabFragment = new NotesTabFragment();
@@ -52,7 +56,7 @@ public class NotesTabFragment extends Fragment {
     }
 
     @BindView(R.id.recycler_notes)
-    ContextMenuRecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     private NotesAdapter mAdapter;
 
@@ -83,7 +87,7 @@ public class NotesTabFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final Context context = view.getContext();
-        mAdapter = new NotesAdapter(context);
+        mAdapter = new NotesAdapter(context, new OnNoteActionsClickListener());
 
         registerForContextMenu(mRecyclerView);
 
@@ -112,28 +116,78 @@ public class NotesTabFragment extends Fragment {
         }
     }
 
+    private void onItemEditClick(final long pId) {
+        final INote note = mAdapter.getItem(pId);
+
+        final FragmentActivity activity = getActivity();
+
+        if (activity instanceof IAppNavigator) {
+            ((IAppNavigator) activity).goToEditNote(note);
+        }
+    }
+
+    private void onItemDeleteClick(final long pId) {
+        final Completable deleteNoteCompletable = INotesModelFactory.Impl.get(getContext()).getDeleteNoteCallable(pId);
+
+        mCompositeDisposable.add(
+                deleteNoteCompletable.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onComplete() {
+                                mAdapter.deleteNote(pId);
+                            }
+
+                            @Override
+                            public void onError(final Throwable e) {
+                                showError();
+                            }
+                        }));
+    }
+
     @Override
-    public boolean onContextItemSelected(final MenuItem item) {
-        final ContextMenuRecyclerView.RecyclerViewContextMenuInfo info = (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) item.getMenuInfo();
+    public void onSelected() {
+        if (isResumed()) {
+            getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
+        }
+    }
 
-        if (item.getItemId() == R.id.action_delete_note) {
-            final ICallable<Integer> deleteNoteCallable = INotesModelFactory.Impl.get(getContext()).getDeleteNoteCallable(info.id);
-            ICallExecutor.Impl.newInstance(deleteNoteCallable).enqueue(new OnOperationUpdateSuccess());
+    @Override
+    public void onUnselected() {
+    }
 
-            return true;
-        } else if (item.getItemId() == R.id.action_edit_note) {
-            final INote note = mAdapter.getItem(info.position);
+    private class OnNoteActionsClickListener implements IOnNoteActionsClickListener {
+        @Override
+        public void onActionClick(final long pNoteId) {
 
-            final FragmentActivity activity = getActivity();
+            final EditNotificationDialog editNotificationDialog = EditNotificationDialog.newInstance(pNoteId);
+            editNotificationDialog.setOnClickListener(new DialogOnEditDeleteClickListener());
+            editNotificationDialog.show(getChildFragmentManager(), EditNotificationDialog.class.getSimpleName());
+        }
+    }
 
-            if (activity instanceof IAppNavigator) {
-                ((IAppNavigator) activity).goToEditNote(note);
-            }
+    private class DialogOnEditDeleteClickListener implements EditNotificationDialog.OnClickListener {
 
-            return true;
+        @Override
+        public void onDeleteClicked(final long pNoteId) {
+            onItemDeleteClick(pNoteId);
         }
 
-        return super.onContextItemSelected(item);
+        @Override
+        public void onEditClicked(final long pNoteId) {
+            onItemEditClick(pNoteId);
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        final Fragment dialogFragment = getChildFragmentManager().findFragmentByTag(EditNotificationDialog.class.getSimpleName());
+
+        if (dialogFragment instanceof EditNotificationDialog) {
+            ((EditNotificationDialog) dialogFragment).setOnClickListener(new DialogOnEditDeleteClickListener());
+        }
     }
 
     private class GetNotesLoaderCallbacks implements LoaderManager.LoaderCallbacks<ResultWrapper<List<INote>>> {
@@ -170,25 +224,6 @@ public class NotesTabFragment extends Fragment {
         }
     }
 
-    private class OnOperationUpdateSuccess implements ISuccess<Integer> {
-        @Override
-        public void onResult(final Integer pResult) {
-            onOperationFinished();
-        }
-
-        @Override
-        public void onError(final Throwable pThrowable) {
-            showError();
-
-            onOperationFinished();
-        }
-
-        @Override
-        public boolean isAlive() {
-            return UiUtils.isContextAlive(getContext());
-        }
-    }
-
     private void showError() {
         final Context context = getContext();
 
@@ -197,16 +232,10 @@ public class NotesTabFragment extends Fragment {
         }
     }
 
-    private void onOperationFinished() {
-        final FragmentActivity activity = getActivity();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-        if (UiUtils.isContextAlive(activity)) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
-                }
-            });
-        }
+        mCompositeDisposable.dispose();
     }
 }

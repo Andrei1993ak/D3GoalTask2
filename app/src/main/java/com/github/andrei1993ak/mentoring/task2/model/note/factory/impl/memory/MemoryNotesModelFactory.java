@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+
 public class MemoryNotesModelFactory implements INotesModelFactory {
 
     private static final Map<Long, INote> sNoteMap = new ConcurrentHashMap<>();
@@ -28,14 +32,19 @@ public class MemoryNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Integer> getDeleteNoteCallable(final long pNoteId) {
-        return new ICallable<Integer>() {
-
+    public Completable getDeleteNoteCallable(final long pNoteId) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Integer call() {
-                return sNoteMap.remove(pNoteId) != null ? 1 : 0;
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
+                final INote removedNote = sNoteMap.remove(pNoteId);
+
+                if (removedNote != null) {
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(new Throwable("Item Not Found!"));
+                }
             }
-        };
+        });
     }
 
     @Override

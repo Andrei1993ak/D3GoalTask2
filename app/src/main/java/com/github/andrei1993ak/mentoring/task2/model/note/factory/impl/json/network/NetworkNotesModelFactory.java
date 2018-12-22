@@ -11,6 +11,8 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -28,20 +30,8 @@ public class NetworkNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Integer> getDeleteNoteCallable(final long pNoteId) {
-        return new ICallable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                final Call<ResponseBody> responseBodyCall = ApiHolder.getInstance().getApi().deleteNote(pNoteId);
-                final Response<ResponseBody> response = responseBodyCall.execute();
-
-                if (response.isSuccessful()) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        };
+    public Completable getDeleteNoteCallable(final long pNoteId) {
+        return ApiHolder.getInstance().getApi().deleteNote(pNoteId);
     }
 
     @Override

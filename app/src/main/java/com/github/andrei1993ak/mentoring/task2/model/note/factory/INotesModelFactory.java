@@ -14,13 +14,15 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory.Me
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public interface INotesModelFactory {
 
     Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext);
 
     Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext);
 
-    ICallable<Integer> getDeleteNoteCallable(final long pNoteId);
+    Completable getDeleteNoteCallable(final long pNoteId);
 
     ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription,
                                              final boolean pIsFavourite);

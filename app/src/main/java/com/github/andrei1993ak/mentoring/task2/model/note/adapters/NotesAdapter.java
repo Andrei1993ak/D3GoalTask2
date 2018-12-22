@@ -24,10 +24,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     private final LayoutInflater mLayoutInflater;
     private final List<INote> mNotes;
+    private final IOnNoteActionsClickListener mIOnNoteActionsClickListener;
 
-    public NotesAdapter(final Context pContext) {
+    public NotesAdapter(final Context pContext, final IOnNoteActionsClickListener pOnNoteActionsClickListener) {
         mLayoutInflater = LayoutInflater.from(pContext);
         mNotes = new ArrayList<>();
+        mIOnNoteActionsClickListener = pOnNoteActionsClickListener;
     }
 
     @Override
@@ -43,6 +45,23 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         }
 
         notifyDataSetChanged();
+    }
+
+    public void deleteNote(final long pId) {
+        int position = -1;
+
+        for (int i = 0; i < mNotes.size(); i++) {
+            if (mNotes.get(i).getId().equals(pId)) {
+                position = i;
+
+                break;
+            }
+        }
+
+        if (position != -1) {
+            mNotes.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     @NonNull
@@ -61,8 +80,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return mNotes.size();
     }
 
-    public INote getItem(final int pPosition) {
-        return mNotes.get(pPosition);
+    public INote getItem(final long pId) {
+        for (int i = 0; i < mNotes.size(); i++) {
+            if (getItemId(i) == pId) {
+                return mNotes.get(i);
+            }
+        }
+
+        return null;
     }
 
     class NotesViewHolder extends RecyclerView.ViewHolder {
@@ -73,6 +98,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         @BindView(R.id.note_item_description)
         TextView mNoteDescription;
 
+        private long mNoteId;
+
         NotesViewHolder(@NonNull final View itemView) {
             super(itemView);
 
@@ -81,8 +108,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             mNoteTitle.setOnTouchListener(new RightDrawableOnTouchListener(mNoteTitle) {
                 @Override
                 public boolean onDrawableTouch(final MotionEvent event) {
-                    itemView.showContextMenu();
 
+                    if (mIOnNoteActionsClickListener != null) {
+                        mIOnNoteActionsClickListener.onActionClick(mNoteId);
+                    }
                     return false;
                 }
             });
@@ -91,6 +120,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         void bindData(final INote pNote) {
             mNoteTitle.setText(pNote.getTitle());
             mNoteDescription.setText(pNote.getDescription());
+            mNoteId = pNote.getId();
         }
     }
 }

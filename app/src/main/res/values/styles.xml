@@ -18,4 +18,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ContextMenuTextView" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
 </resources>

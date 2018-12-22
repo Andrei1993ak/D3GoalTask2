@@ -2,6 +2,8 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.net
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -24,5 +26,5 @@ public interface NotesApi {
     Call<ResponseBody> replaceNote(@Path("id") long pId, @Body NoteEntity pNote);
 
     @DELETE("api/notes/{id}")
-    Call<ResponseBody> deleteNote(@Path("id") long pId);
+    Completable deleteNote(@Path("id") long pId);
 }

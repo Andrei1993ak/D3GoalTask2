@@ -11,6 +11,8 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 import java.io.File;
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public class FileNoteModelFactory implements INotesModelFactory {
 
     private static final String FILE_NAME = "myData.txt";
@@ -31,8 +33,8 @@ public class FileNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Integer> getDeleteNoteCallable(final long pNoteId) {
-        return new DeleteFileNoteCallable(pNoteId, mFile);
+    public Completable getDeleteNoteCallable(final long pNoteId) {
+        return Completable.create(new DeleteFileNoteCallable(pNoteId, mFile));
     }
 
     @Override

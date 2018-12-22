@@ -10,6 +10,8 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 public class PreferenceNoteModelFactory implements INotesModelFactory {
 
     static final String PREFERENCE_KEY = PreferenceNoteModelFactory.class.getSimpleName();
@@ -25,8 +27,8 @@ public class PreferenceNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Integer> getDeleteNoteCallable(final long pNoteId) {
-        return new DeletePreferenceNoteCallable(pNoteId);
+    public Completable getDeleteNoteCallable(final long pNoteId) {
+        return Completable.create(new DeletePreferenceNoteCompletableOnSubscriber(pNoteId));
     }
 
     @Override

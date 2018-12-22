@@ -45,6 +45,7 @@ public class NotesFragment extends Fragment implements ITitled {
 
         mAdapter = new NotesPagerAdapter(getChildFragmentManager(), view.getContext().getResources());
         mNotesPager.setAdapter(mAdapter);
+        mNotesPager.addOnPageChangeListener(mAdapter);
         mTabLayout.setupWithViewPager(mNotesPager);
 
         mCreateButton.setOnClickListener(new OnCreateButtonClickListener());

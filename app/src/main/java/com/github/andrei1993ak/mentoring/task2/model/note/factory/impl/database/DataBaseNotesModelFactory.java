@@ -10,6 +10,10 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+
 public class DataBaseNotesModelFactory implements INotesModelFactory {
 
     @Override
@@ -23,21 +27,21 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Integer> getDeleteNoteCallable(final long pNoteId) {
-        return new ICallable<Integer>() {
+    public Completable getDeleteNoteCallable(final long pNoteId) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Integer call() {
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
                 final NoteRecord noteRecord = NoteRecord.findById(NoteRecord.class, pNoteId);
+
                 if (noteRecord != null) {
                     noteRecord.delete();
 
-                    return 1;
-
+                    emitter.onComplete();
                 } else {
-                    return 0;
+                    emitter.onError(new Throwable("File not Found!"));
                 }
             }
-        };
+        });
     }
 
     @Override

@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:background="#eaecee">
 
-    <com.github.andrei1993ak.mentoring.task2.utils.views.ContextMenuRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_notes"
         android:padding="10dp"
         android:layout_width="match_parent"
