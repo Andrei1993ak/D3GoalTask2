@@ -1,6 +1,5 @@
 package com.github.andrei1993ak.mentoring.task2.activities.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,14 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.core.ICallExecutor;
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
-import com.github.andrei1993ak.mentoring.task2.core.ISuccess;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
@@ -38,6 +33,11 @@ import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class CreateEditNoteFragment extends Fragment implements ITitled {
 
@@ -62,6 +62,15 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
     AppCompatCheckBox mIsFavouriteCheckBox;
 
     private long mId;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mCompositeDisposable.dispose();
+    }
+
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     public static CreateEditNoteFragment getCreationInstance(final boolean pIsFavouritePreselected,
                                                              final String pTitle, final String pDescription) {
@@ -155,15 +164,18 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
             } else {
                 final INotesModelFactory notesLoaderFactory = INotesModelFactory.Impl.get(context);
 
-                final ICallable<Boolean> callable;
+                final Completable completable;
 
                 if (mIsCreationMode) {
-                    callable = notesLoaderFactory.getCreateNoteCallable(title, description, mIsFavouriteCheckBox.isChecked());
+                    completable = notesLoaderFactory.getCreateNoteCompletable(title, description, mIsFavouriteCheckBox.isChecked());
                 } else {
-                    callable = notesLoaderFactory.getUpdateNoteCallable(mId, title, description, mIsFavouriteCheckBox.isChecked());
+                    completable = notesLoaderFactory.getUpdateNoteCompletable(mId, title, description, mIsFavouriteCheckBox.isChecked());
                 }
 
-                ICallExecutor.Impl.newInstance(callable).enqueue(new OperationSuccess());
+                mCompositeDisposable.add(
+                        completable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(new CompletableObserver()));
             }
         } else if (itemId == R.id.action_share_note) {
             final StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -220,27 +232,19 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
         return new File(dirPath, "note.jpg");
     }
 
-    public static void hideKeyboardFrom(final Context context, final View view) {
-        final InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
     @Override
     public int getTitleResId() {
         return R.string.manage_note;
     }
 
-    private class OperationSuccess implements ISuccess<Boolean> {
+    private class CompletableObserver extends DisposableCompletableObserver {
         @Override
-        public void onResult(final Boolean pBoolean) {
+        public void onComplete() {
             onOperationResult();
         }
 
         @Override
-        public void onError(final Throwable pThrowable) {
+        public void onError(final Throwable e) {
             final Context context = getContext();
 
             if (UiUtils.isContextAlive(context)) {
@@ -248,11 +252,6 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
             }
 
             onOperationResult();
-        }
-
-        @Override
-        public boolean isAlive() {
-            return UiUtils.isContextAlive(getContext());
         }
 
         private void onOperationResult() {

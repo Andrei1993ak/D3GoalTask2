@@ -127,7 +127,7 @@ public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnP
     }
 
     private void onItemDeleteClick(final long pId) {
-        final Completable deleteNoteCompletable = INotesModelFactory.Impl.get(getContext()).getDeleteNoteCallable(pId);
+        final Completable deleteNoteCompletable = INotesModelFactory.Impl.get(getContext()).getDeleteNoteCompletable(pId);
 
         mCompositeDisposable.add(
                 deleteNoteCompletable.subscribeOn(Schedulers.io())

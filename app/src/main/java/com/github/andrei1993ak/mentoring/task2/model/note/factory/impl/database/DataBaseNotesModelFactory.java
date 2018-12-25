@@ -3,7 +3,6 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
@@ -27,7 +26,7 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Completable getDeleteNoteCallable(final long pNoteId) {
+    public Completable getDeleteNoteCompletable(final long pNoteId) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(final CompletableEmitter emitter) throws Exception {
@@ -45,10 +44,10 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new ICallable<Boolean>() {
+    public Completable getUpdateNoteCompletable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Boolean call() {
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
                 final NoteRecord noteRecord = NoteRecord.findById(NoteRecord.class, pNoteId);
 
                 noteRecord.title = pTitle;
@@ -57,17 +56,16 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
 
                 noteRecord.save();
 
-                return true;
+                emitter.onComplete();
             }
-        };
+        });
     }
 
     @Override
-    public ICallable<Boolean> getCreateNoteCallable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new ICallable<Boolean>() {
-
+    public Completable getCreateNoteCompletable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Boolean call() {
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
                 final NoteRecord noteRecord = new NoteRecord();
 
                 noteRecord.title = pTitle;
@@ -76,8 +74,8 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
 
                 noteRecord.save();
 
-                return true;
+                emitter.onComplete();
             }
-        };
+        });
     }
 }

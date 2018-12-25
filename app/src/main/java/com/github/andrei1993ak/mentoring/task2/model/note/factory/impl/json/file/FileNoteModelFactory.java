@@ -3,7 +3,6 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.fil
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
@@ -33,17 +32,17 @@ public class FileNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Completable getDeleteNoteCallable(final long pNoteId) {
-        return Completable.create(new DeleteFileNoteCallable(pNoteId, mFile));
+    public Completable getDeleteNoteCompletable(final long pNoteId) {
+        return Completable.create(new DeleteFileNoteCompletableOnSubscribe(pNoteId, mFile));
     }
 
     @Override
-    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new UpdateFileNoteCallable(pNoteId, pTitle, pDescription, pIsFavourite, mFile);
+    public Completable getUpdateNoteCompletable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new UpdateFileNoteCompletableOnSubscriber(pNoteId, pTitle, pDescription, pIsFavourite, mFile));
     }
 
     @Override
-    public ICallable<Boolean> getCreateNoteCallable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new CreateFileNoteCallable(pTitle, pDescription, pIsFavourite, mFile);
+    public Completable getCreateNoteCompletable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CreateFileNoteCompletableOnSubscribe(pTitle, pDescription, pIsFavourite, mFile));
     }
 }

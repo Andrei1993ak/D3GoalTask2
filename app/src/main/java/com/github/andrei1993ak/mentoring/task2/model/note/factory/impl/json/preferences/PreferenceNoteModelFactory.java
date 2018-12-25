@@ -3,7 +3,6 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.pre
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
@@ -27,17 +26,17 @@ public class PreferenceNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Completable getDeleteNoteCallable(final long pNoteId) {
+    public Completable getDeleteNoteCompletable(final long pNoteId) {
         return Completable.create(new DeletePreferenceNoteCompletableOnSubscriber(pNoteId));
     }
 
     @Override
-    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new UpdatePreferenceNoteCallable(pNoteId, pTitle, pDescription, pIsFavourite);
+    public Completable getUpdateNoteCompletable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new UpdatePreferenceNoteCompletableOnSubscriber(pNoteId, pTitle, pDescription, pIsFavourite));
     }
 
     @Override
-    public ICallable<Boolean> getCreateNoteCallable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new CreatePreferenceNoteCallable(pTitle, pDescription, pIsFavourite);
+    public Completable getCreateNoteCompletable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CreatePreferenceNoteCompletableOnSubscribe(pTitle, pDescription, pIsFavourite));
     }
 }

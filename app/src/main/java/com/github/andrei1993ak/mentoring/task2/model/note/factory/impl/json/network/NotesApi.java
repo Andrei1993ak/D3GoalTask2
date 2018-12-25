@@ -20,10 +20,10 @@ public interface NotesApi {
     Call<List<NoteEntity>> getAllNotes(@Query("favouriteOnly") String isFavouriteOnly);
 
     @POST("/api/notes")
-    Call<ResponseBody> createNote(@Body NoteEntity pNote);
+    Completable createNote(@Body NoteEntity pNote);
 
     @PUT("/api/notes/{id}")
-    Call<ResponseBody> replaceNote(@Path("id") long pId, @Body NoteEntity pNote);
+    Completable replaceNote(@Path("id") long pId, @Body NoteEntity pNote);
 
     @DELETE("api/notes/{id}")
     Completable deleteNote(@Path("id") long pId);

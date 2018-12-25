@@ -3,7 +3,6 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory;
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-import com.github.andrei1993ak.mentoring.task2.core.ICallable;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.Note;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
@@ -32,7 +31,7 @@ public class MemoryNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Completable getDeleteNoteCallable(final long pNoteId) {
+    public Completable getDeleteNoteCompletable(final long pNoteId) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(final CompletableEmitter emitter) throws Exception {
@@ -48,29 +47,34 @@ public class MemoryNotesModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public ICallable<Boolean> getUpdateNoteCallable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
-        return new ICallable<Boolean>() {
-
+    public Completable getUpdateNoteCompletable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Boolean call() {
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
                 final Note note = new Note(pNoteId, pTitle, pDescription, pIsFavourite);
 
-                return sNoteMap.put(pNoteId, note) != null;
+                if (sNoteMap.put(pNoteId, note) != null) {
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(new Throwable("Item Not Found!"));
+                }
             }
-        };
+        });
     }
 
     @Override
-    public ICallable<Boolean> getCreateNoteCallable(final String pTitle, final String pDescription,
-                                                    final boolean pIsFavourite) {
-        return new ICallable<Boolean>() {
-
+    public Completable getCreateNoteCompletable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
+        return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public Boolean call() {
+            public void subscribe(final CompletableEmitter emitter) throws Exception {
                 final Note note = new Note(System.currentTimeMillis(), pTitle, pDescription, pIsFavourite);
 
-                return sNoteMap.put(note.getId(), note) != null;
+                if (sNoteMap.put(note.getId(), note) != null) {
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(new Throwable("Item Not Found!"));
+                }
             }
-        };
+        });
     }
 }

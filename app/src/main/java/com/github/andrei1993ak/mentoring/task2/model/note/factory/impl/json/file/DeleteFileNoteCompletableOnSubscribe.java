@@ -10,12 +10,12 @@ import java.util.List;
 import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableOnSubscribe;
 
-public class DeleteFileNoteCallable implements CompletableOnSubscribe {
+public class DeleteFileNoteCompletableOnSubscribe implements CompletableOnSubscribe {
 
     private final long mId;
     private final File mFile;
 
-    DeleteFileNoteCallable(final long pId, final File pFile) {
+    DeleteFileNoteCompletableOnSubscribe(final long pId, final File pFile) {
         mId = pId;
         mFile = pFile;
     }
