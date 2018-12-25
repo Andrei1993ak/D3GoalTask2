@@ -1,35 +1,50 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database;
 
-import android.content.Context;
-import android.support.v4.content.Loader;
-
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 
 public class DataBaseNotesModelFactory implements INotesModelFactory {
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
-        return new DatabaseNotesLoader(pContext, false);
+    public Single<List<INote>> getAllNotes() {
+        return new Single<List<INote>>() {
+            @Override
+            protected void subscribeActual(final SingleObserver<? super List<INote>> observer) {
+                final List<INote> resultList = new ArrayList<>();
+                resultList.addAll(NoteRecord.listAll(NoteRecord.class));
+
+                observer.onSuccess(resultList);
+            }
+        };
     }
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
-        return new DatabaseNotesLoader(pContext, true);
+    public Single<List<INote>> getFavouriteNotes() {
+        return new Single<List<INote>>() {
+            @Override
+            protected void subscribeActual(final SingleObserver<? super List<INote>> observer) {
+                final List<INote> resultList = new ArrayList<>();
+                resultList.addAll(NoteRecord.find(NoteRecord.class, "is_favourite = ?", String.valueOf(1)));
+
+                observer.onSuccess(resultList);
+            }
+        };
     }
 
     @Override
     public Completable getDeleteNoteCompletable(final long pNoteId) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public void subscribe(final CompletableEmitter emitter) throws Exception {
+            public void subscribe(final CompletableEmitter emitter) {
                 final NoteRecord noteRecord = NoteRecord.findById(NoteRecord.class, pNoteId);
 
                 if (noteRecord != null) {
@@ -47,7 +62,7 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
     public Completable getUpdateNoteCompletable(final long pNoteId, final String pTitle, final String pDescription, final boolean pIsFavourite) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public void subscribe(final CompletableEmitter emitter) throws Exception {
+            public void subscribe(final CompletableEmitter emitter) {
                 final NoteRecord noteRecord = NoteRecord.findById(NoteRecord.class, pNoteId);
 
                 noteRecord.title = pTitle;
@@ -65,7 +80,7 @@ public class DataBaseNotesModelFactory implements INotesModelFactory {
     public Completable getCreateNoteCompletable(final String pTitle, final String pDescription, final boolean pIsFavourite) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
-            public void subscribe(final CompletableEmitter emitter) throws Exception {
+            public void subscribe(final CompletableEmitter emitter) {
                 final NoteRecord noteRecord = new NoteRecord();
 
                 noteRecord.title = pTitle;

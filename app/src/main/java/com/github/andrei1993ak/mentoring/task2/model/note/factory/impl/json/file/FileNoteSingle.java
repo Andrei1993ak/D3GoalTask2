@@ -1,28 +1,28 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.file;
 
-import android.content.Context;
-
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.BaseExceptionWrapperLoader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileLoader extends BaseExceptionWrapperLoader<List<INote>> {
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+
+public class FileNoteSingle extends Single<List<INote>> {
 
     private final File mFile;
     private final boolean mIsFavouriteOnly;
 
-    FileLoader(final Context context, final File pFile, final boolean pIsFavouriteOnly) {
-        super(context);
+    FileNoteSingle(final File pFile, final boolean pIsFavouriteOnly) {
+        super();
 
         mFile = pFile;
         mIsFavouriteOnly = pIsFavouriteOnly;
     }
 
     @Override
-    public List<INote> loadResultDataInBackground() throws Exception {
+    protected void subscribeActual(final SingleObserver<? super List<INote>> observer) {
         final List<INote> noteList = new GetAllFileNoteCallable(mFile).call();
 
         if (mIsFavouriteOnly) {
@@ -34,9 +34,9 @@ public class FileLoader extends BaseExceptionWrapperLoader<List<INote>> {
                 }
             }
 
-            return favouriteNotes;
+            observer.onSuccess(favouriteNotes);
         } else {
-            return noteList;
+            observer.onSuccess(noteList);
         }
     }
 }

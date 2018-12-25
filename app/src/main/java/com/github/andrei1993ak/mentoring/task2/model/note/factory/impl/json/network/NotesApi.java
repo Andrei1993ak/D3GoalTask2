@@ -3,9 +3,7 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.net
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
+import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -17,7 +15,7 @@ import retrofit2.http.Query;
 public interface NotesApi {
 
     @GET("/api/notes")
-    Call<List<NoteEntity>> getAllNotes(@Query("favouriteOnly") String isFavouriteOnly);
+    Single<List<NoteEntity>> getAllNotes(@Query("favouriteOnly") String isFavouriteOnly);
 
     @POST("/api/notes")
     Completable createNote(@Body NoteEntity pNote);

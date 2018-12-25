@@ -43,7 +43,10 @@ public class NotesFragment extends Fragment implements ITitled {
 
         ButterKnife.bind(this, view);
 
-        mAdapter = new NotesPagerAdapter(getChildFragmentManager(), view.getContext().getResources());
+        if (mAdapter == null) {
+            mAdapter = new NotesPagerAdapter(getChildFragmentManager(), view.getContext().getResources());
+        }
+
         mNotesPager.setAdapter(mAdapter);
         mNotesPager.addOnPageChangeListener(mAdapter);
         mTabLayout.setupWithViewPager(mNotesPager);

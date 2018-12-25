@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.activities.dialogs.AddNotificationDialog;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.CreateEditNoteFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.DownloadVideoFragment;
 import com.github.andrei1993ak.mentoring.task2.activities.fragments.ITitled;

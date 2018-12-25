@@ -1,26 +1,25 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.preferences;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.BaseExceptionWrapperLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreferencesLoader extends BaseExceptionWrapperLoader<List<INote>> {
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+
+public class PreferencesNotesSingle extends Single<List<INote>> {
 
     private final boolean mIsFavouriteOnly;
 
-    PreferencesLoader(@NonNull final Context context, final boolean pIsFavouriteOnly) {
-        super(context);
+    PreferencesNotesSingle(final boolean pIsFavouriteOnly) {
+        super();
 
         mIsFavouriteOnly = pIsFavouriteOnly;
     }
 
     @Override
-    public List<INote> loadResultDataInBackground() throws Exception {
+    protected void subscribeActual(final SingleObserver<? super List<INote>> observer) {
         final List<INote> noteList = new GetAllPreferenceNoteCallable().call();
 
         if (mIsFavouriteOnly) {
@@ -32,9 +31,9 @@ public class PreferencesLoader extends BaseExceptionWrapperLoader<List<INote>> {
                 }
             }
 
-            return favouriteNotes;
+            observer.onSuccess(favouriteNotes);
         } else {
-            return noteList;
+            observer.onSuccess(noteList);
         }
     }
 }

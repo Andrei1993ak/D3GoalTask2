@@ -1,16 +1,13 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.file;
 
-import android.content.Context;
-import android.support.v4.content.Loader;
-
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
 import java.io.File;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
 
 public class FileNoteModelFactory implements INotesModelFactory {
 
@@ -22,13 +19,13 @@ public class FileNoteModelFactory implements INotesModelFactory {
     }
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
-        return new FileLoader(pContext, mFile, false);
+    public Single<List<INote>> getAllNotes() {
+        return new FileNoteSingle(mFile, false);
     }
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
-        return new FileLoader(pContext, mFile, true);
+    public Single<List<INote>> getFavouriteNotes() {
+        return new FileNoteSingle(mFile, true);
     }
 
     @Override

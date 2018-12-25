@@ -1,5 +1,6 @@
 package com.github.andrei1993ak.mentoring.task2.activities.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,10 +20,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.R;
+import com.github.andrei1993ak.mentoring.task2.activities.IAppNavigator;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
 import com.github.andrei1993ak.mentoring.task2.utils.TextUtils;
@@ -237,6 +240,15 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
         return R.string.manage_note;
     }
 
+
+    public static void hideKeyboardFrom(final Context context, final View view) {
+        final InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     private class CompletableObserver extends DisposableCompletableObserver {
         @Override
         public void onComplete() {
@@ -255,6 +267,12 @@ public class CreateEditNoteFragment extends Fragment implements ITitled {
         }
 
         private void onOperationResult() {
+            final FragmentActivity activity = getActivity();
+
+            if (activity instanceof IAppNavigator && UiUtils.isContextAlive(activity)) {
+                hideKeyboardFrom(activity, activity.getCurrentFocus());
+            }
+
             final FragmentManager fragmentManager = getFragmentManager();
 
             if (fragmentManager != null) {

@@ -1,4 +1,4 @@
-package com.github.andrei1993ak.mentoring.task2.activities;
+package com.github.andrei1993ak.mentoring.task2.activities.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;

@@ -1,6 +1,5 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.file;
 
-import com.github.andrei1993ak.mentoring.task2.holders.ContextHolder;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.base.BaseJsonPutAllNoteCallable;
 import com.github.andrei1993ak.mentoring.task2.utils.FileUtils;

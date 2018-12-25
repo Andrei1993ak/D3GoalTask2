@@ -1,27 +1,27 @@
 package com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.json.network;
 
-import android.content.Context;
-import android.support.v4.content.Loader;
-
 import com.github.andrei1993ak.mentoring.task2.holders.ApiHolder;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 
 public class NetworkNotesModelFactory implements INotesModelFactory {
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext) {
-        return new NetworkNotesLoader(pContext, false);
+    public Single<List<INote>> getAllNotes() {
+        return getConvertedSingle(false);
     }
 
     @Override
-    public Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext) {
-        return new NetworkNotesLoader(pContext, true);
+    public Single<List<INote>> getFavouriteNotes() {
+        return getConvertedSingle(true);
     }
 
     @Override
@@ -50,5 +50,19 @@ public class NetworkNotesModelFactory implements INotesModelFactory {
         entity.setFavourite(pIsFavourite);
 
         return ApiHolder.getInstance().getApi().createNote(entity);
+    }
+
+    private Single<List<INote>> getConvertedSingle(final boolean pIsFavouriteOnly) {
+        return ApiHolder.getInstance().getApi()
+                .getAllNotes(String.valueOf(pIsFavouriteOnly))
+                .flatMap(new Function<List<NoteEntity>, SingleSource<List<INote>>>() {
+                    @Override
+                    public SingleSource<List<INote>> apply(final List<NoteEntity> pNoteEntities) throws Exception {
+                        final List<INote> noteList = new ArrayList<>();
+                        noteList.addAll(pNoteEntities);
+
+                        return Single.just(noteList);
+                    }
+                });
     }
 }

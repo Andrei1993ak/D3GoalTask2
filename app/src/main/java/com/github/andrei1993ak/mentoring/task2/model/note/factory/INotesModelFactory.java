@@ -2,7 +2,6 @@ package com.github.andrei1993ak.mentoring.task2.model.note.factory;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.v4.content.Loader;
 
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.database.DataBaseNotesModelFactory;
@@ -14,12 +13,13 @@ import com.github.andrei1993ak.mentoring.task2.model.note.factory.impl.memory.Me
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
 
 public interface INotesModelFactory {
 
-    Loader<ResultWrapper<List<INote>>> getAllNotesLoader(final Context pContext);
+    Single<List<INote>> getAllNotes();
 
-    Loader<ResultWrapper<List<INote>>> getFavouriteNotesLoader(final Context pContext);
+    Single<List<INote>> getFavouriteNotes();
 
     Completable getDeleteNoteCompletable(final long pNoteId);
 

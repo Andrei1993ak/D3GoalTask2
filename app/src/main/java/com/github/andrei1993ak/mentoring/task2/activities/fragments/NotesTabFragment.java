@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -15,32 +13,32 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.andrei1993ak.mentoring.task2.R;
-import com.github.andrei1993ak.mentoring.task2.activities.EditNotificationDialog;
 import com.github.andrei1993ak.mentoring.task2.activities.IAppNavigator;
+import com.github.andrei1993ak.mentoring.task2.activities.dialogs.EditNotificationDialog;
 import com.github.andrei1993ak.mentoring.task2.model.note.INote;
 import com.github.andrei1993ak.mentoring.task2.model.note.adapters.IOnNoteActionsClickListener;
 import com.github.andrei1993ak.mentoring.task2.model.note.adapters.NotesAdapter;
 import com.github.andrei1993ak.mentoring.task2.model.note.factory.INotesModelFactory;
-import com.github.andrei1993ak.mentoring.task2.model.note.factory.ResultWrapper;
 import com.github.andrei1993ak.mentoring.task2.utils.UiUtils;
 import com.github.andrei1993ak.mentoring.task2.utils.views.VerticalSpaceItemDecoration;
 
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Completable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnPageSelectedListener {
-    private final static int GET_NOTES_LOADER_ID = 0;
     private static final String IS_FAVOURITE_KEY = "IS_FAVOURITE_KEY";
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
@@ -57,6 +55,9 @@ public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnP
 
     @BindView(R.id.recycler_notes)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     private NotesAdapter mAdapter;
 
@@ -101,7 +102,7 @@ public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnP
     public void onResume() {
         super.onResume();
 
-        getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
+        loadNotes();
     }
 
     @Override
@@ -148,7 +149,7 @@ public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnP
     @Override
     public void onSelected() {
         if (isResumed()) {
-            getLoaderManager().restartLoader(GET_NOTES_LOADER_ID, new Bundle(), new GetNotesLoaderCallbacks()).forceLoad();
+            loadNotes();
         }
     }
 
@@ -190,37 +191,39 @@ public class NotesTabFragment extends Fragment implements NotesPagerAdapter.IOnP
         }
     }
 
-    private class GetNotesLoaderCallbacks implements LoaderManager.LoaderCallbacks<ResultWrapper<List<INote>>> {
-        @NonNull
-        @Override
-        public Loader<ResultWrapper<List<INote>>> onCreateLoader(final int pI, @Nullable final Bundle pBundle) {
-            final Loader<ResultWrapper<List<INote>>> loader;
+    private void loadNotes() {
+        mProgressBar.setVisibility(View.VISIBLE);
 
-            final Context context = getContext();
+        mCompositeDisposable.add(getNotesObservable().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(getNotesSubscriber()));
 
-            final INotesModelFactory notesLoaderFactory = INotesModelFactory.Impl.get(context);
+    }
 
-            if (mIsFavourite) {
-                loader = notesLoaderFactory.getFavouriteNotesLoader(context);
-            } else {
-                loader = notesLoaderFactory.getAllNotesLoader(context);
+    private DisposableSingleObserver<List<INote>> getNotesSubscriber() {
+        return new DisposableSingleObserver<List<INote>>() {
+
+            @Override
+            public void onSuccess(final List<INote> pNotes) {
+                mAdapter.updateNotes(pNotes);
+                mProgressBar.setVisibility(View.GONE);
             }
 
-            return loader;
-        }
-
-        @Override
-        public void onLoadFinished(@NonNull final Loader<ResultWrapper<List<INote>>> pLoader, final ResultWrapper<List<INote>> pResultWrapper) {
-            if (pResultWrapper == null || pResultWrapper.getException() != null) {
+            @Override
+            public void onError(final Throwable e) {
                 showError();
-            } else {
-                mAdapter.updateNotes(pResultWrapper.getResult());
+                mProgressBar.setVisibility(View.GONE);
             }
-        }
+        };
+    }
 
-        @Override
-        public void onLoaderReset(@NonNull final Loader<ResultWrapper<List<INote>>> pLoader) {
-            mAdapter.updateNotes(Collections.<INote>emptyList());
+    private Single<List<INote>> getNotesObservable() {
+        final INotesModelFactory notesLoaderFactory = INotesModelFactory.Impl.get(getContext());
+
+        if (mIsFavourite) {
+            return notesLoaderFactory.getFavouriteNotes();
+        } else {
+            return notesLoaderFactory.getAllNotes();
         }
     }
 
